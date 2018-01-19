@@ -7,39 +7,12 @@ module bookzone-example {
     prefix yang;
   }
 
-  organization
-    "BookZone, a fictive book store chain";
-
-  contact
-    "YANG book project:   <http://FIXME>
-
-     Editor:   Jan Lindblad
-               <mailto:janl@tail-f.com>";
-
-  description 
-    "BookZone defines this model to provide a standard interface for
-     inventory browser and management applications.
-
-     Copyright (c) 2018 the YANG book project and the persons 
-     identified as authors of the code.  All rights reserved.
-
-     Redistribution and use in source and binary forms, with or
-     without modification, is permitted pursuant to, and subject
-     to the license terms contained in, the Simplified BSD License
-     set forth in Section 4.c of the IETF Trust's Legal Provisions
-     Relating to IETF Documents
-     (http://trustee.ietf.org/license-info).";
-
-  revision 2018-01-05 {
-    description
-      "Added authors and customers, see /authors and /customers.";
-  }
   revision 2018-01-04 {
     description 
       "Added status information about books and purchases, see
        /books/book/popularity
        /books/book/formats/number-of-copies
-       /customers/customer/purchases";
+       /users/user/purchase-history";
   }
   revision 2018-01-03 {
     description 
@@ -157,11 +130,6 @@ module bookzone-example {
         type leafref {
           path /authors/author/name;
         }
-        must 'deref(current())/../account-id' {
-          error-message 
-            "Author does not yet have an account, add account before
-             adding titles by this author.";
-        }
       }
       leaf language {
         type language-type;
@@ -187,7 +155,6 @@ module bookzone-example {
           units local-currency;
         }
         container number-of-copies {
-          when 'not(derived-from(../format, "bz:file-i"))';
           config false;
           leaf in-stock {
             type uint32;
@@ -265,7 +232,8 @@ module bookzone-example {
         }
         leaf format {
           type leafref {
-            path deref(../title)/../formats/format;
+            path /books/book/formats/format;
+            // This is not done right, do not copy
           }
         }
         leaf transaction-date-time {
@@ -292,6 +260,7 @@ module bookzone-example {
     leaf format {
       type leafref {
         path /books/book/formats/format;
+        // This is not done right, do not copy
       }
     }
     leaf copies {
