@@ -32,7 +32,10 @@ module bookzone-example {
 
   revision 2018-01-05 {
     description
-      "Added authors and customers, see /authors and /customers.";
+      "Added constraints that
+       - authors need to have an accont set before a book is sold
+       - number of copies in stock only shows for physical items
+       - book leafrefs are chained correctly";
   }
   revision 2018-01-04 {
     description 
@@ -291,7 +294,7 @@ module bookzone-example {
     }
     leaf format {
       type leafref {
-        path /books/book/formats/format;
+        path deref(../title)/../formats/format;
       }
     }
     leaf copies {
