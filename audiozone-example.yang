@@ -1,0 +1,71 @@
+module audiozone-example {
+  yang-version 1.1;
+  namespace 'http://example.com/ns/audiozone';
+  prefix az;
+
+  import bookzone-example {
+    prefix bz;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  organization
+    "AudioZone, a subsidary of the fictive book store chain BookZone";
+
+  contact
+    "YANG book project:   <http://FIXME>
+
+     Editor:   Jan Lindblad
+               <mailto:janl@tail-f.com>";
+
+  description 
+    "AudioZone defines this model to provide a standard interface for
+     inventory browser and management applications. This module extends
+     the bookzone-example.yang module.
+
+     Copyright (c) 2018 the YANG book project and the persons 
+     identified as authors of the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject
+     to the license terms contained in, the Simplified BSD License
+     set forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (http://trustee.ietf.org/license-info).";
+
+  revision 2018-01-09 {
+    description "Initial revision.";
+  }
+
+  identity streaming {
+    base bz:file-i;
+    description
+      "Audiobook streaming.";
+  }
+
+  augment /bz:books/bz:book {
+    list recommendations {
+      key review-date;
+      leaf review-date {
+        type yang:date-and-time;
+      }
+      leaf score {
+        type uint32 {
+          range 1..5;
+        }
+      }
+      leaf review-comment {
+        type string;
+      }
+    }
+  }
+
+  augment /bz:users/bz:user {
+    leaf-list friends {
+      type leafref {
+        path /bz:users/bz:user/bz:name;
+      }
+    }
+  }
+}

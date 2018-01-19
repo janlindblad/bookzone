@@ -1,0 +1,37 @@
+module bookzone-example-ann {
+  yang-version 1.1;
+  namespace 'http://example.com/ns/bookzone/ann';
+  prefix bz-ann;
+
+  import tailf-common {
+    prefix tailf;
+  }
+  import bookzone-example {
+    prefix bz;
+  }
+
+  description
+    "Implementation annotation module for the bookzone-example YANG module";
+
+  tailf:annotate-module bookzone-example {
+    tailf:annotate-statement container[name='books'] {
+      tailf:annotate-statement list[name='book'] {
+        tailf:annotate-statement leaf[name='author'] {
+          tailf:annotate-statement must[value='deref(current())/../account-id'] {
+            tailf:dependency /bz:authors/bz:author/bz:account-id;
+          }
+        }
+      }
+    }
+  }
+  
+ tailf:annotate /bz:books/bz:book/bz:popularity {
+    tailf:cdb-oper;
+  }
+  tailf:annotate /bz:books/bz:book/bz:formats/bz:number-of-copies {
+    tailf:cdb-oper;
+  }
+  tailf:annotate /bz:users/bz:user/bz:purchase-history {
+    tailf:cdb-oper;
+  }
+}

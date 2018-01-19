@@ -1,0 +1,7 @@
+cli-history
+ssh-keydir
+confd-cdb/*.cdb
+*.fxs
+*.log
+*.access
+global.data

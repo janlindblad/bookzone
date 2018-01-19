@@ -1,0 +1,301 @@
+module bookzone-example {
+  yang-version 1.1;
+  namespace 'http://example.com/ns/bookzone';
+  prefix bz;
+
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  organization
+    "BookZone, a fictive book store chain";
+
+  contact
+    "YANG book project:   <http://FIXME>
+
+     Editor:   Jan Lindblad
+               <mailto:janl@tail-f.com>";
+
+  description 
+    "BookZone defines this model to provide a standard interface for
+     inventory browser and management applications.
+
+     Copyright (c) 2018 the YANG book project and the persons 
+     identified as authors of the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject
+     to the license terms contained in, the Simplified BSD License
+     set forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (http://trustee.ietf.org/license-info).";
+
+  revision 2018-01-05 {
+    description
+      "Added authors and customers, see /authors and /customers.";
+  }
+  revision 2018-01-04 {
+    description 
+      "Added status information about books and purchases, see
+       /books/book/popularity
+       /books/book/formats/number-of-copies
+       /customers/customer/purchases";
+  }
+  revision 2018-01-03 {
+    description 
+      "Added action request-loan, rpc returned-loan and
+       notification loan-expired.";
+  }
+  revision 2018-01-02 {
+    description 
+      "Added book formats and authors, see 
+       /books/book/formats
+       /authors";
+  }
+  revision 2018-01-01 {
+    description "Initial revision. A catalog of books.";
+  }
+
+  typedef language-type {
+    type enumeration {
+      enum arabic;
+      enum chinese;
+      enum english;
+      enum french;
+      enum swahili;
+      enum swedish;
+      // List not exhaustive in order to save space
+    }
+    description 
+      "Primary language the book consumer needs to master "+
+      "in order to appreciate the book's content";
+  }
+
+  identity format-i {
+    description "Root identity for all book formats";
+  }
+  identity paper {
+    base format-i;
+    description "Physical book printed on paper";
+  }
+  identity audio-cd {
+    base format-i;
+    description "Audiobook delivered as Compact Disc";
+  }
+  identity file-i {
+    base format-i;
+    description "Book delivered as a file";
+  }
+  identity paperback {
+    base paper;
+    description "Physical book with soft covers";
+  }
+  identity hardcover {
+    base paper;
+    description "Physical book with hard covers";
+  }
+  identity mp3 {
+    base file-i;
+    description "Audiobook delivered as MP3 file";
+  }
+  identity pdf {
+    base file-i;
+    description "Digital book delivered as PDF file";
+  }
+  identity epub {
+    base file-i;
+    description "Digital book delivered as EPUB file";
+  }
+
+  typedef ISBN-10-or-13 {
+    type union {    
+      type string {
+        length 10;
+        pattern '[0-9]{9}[0-9X]';
+      }
+      type string {
+        length 13;
+        pattern '97[89][0-9]{10}';
+      }
+    }
+    description
+      "The International Standard Book Number (ISBN) is a unique
+       numeric commercial book identifier.
+
+       An ISBN is assigned to each edition and variation (except 
+       reprintings) of a book. [source: wikipedia]";
+    reference 
+      "https://en.wikipedia.org/wiki/International_Standard_Book_Number";
+  }
+
+  container authors {
+    list author {
+      key name;
+
+      leaf name {
+        type string;
+      }
+      leaf account-id {
+        type uint32 {
+          range 1001..max;
+        }
+      }
+    }
+  }
+  container books {
+    list book {
+      key isbn;
+
+      leaf isbn {
+        type ISBN-10-or-13;
+      }
+      leaf title {
+        type string;
+        mandatory true;
+      }
+      leaf author {
+        type leafref {
+          path /authors/author/name;
+        }
+        must 'deref(current())/../account-id' {
+          error-message 
+            "Author does not yet have an account, add account before
+             adding titles by this author.";
+        }
+      }
+      leaf language {
+        type language-type;
+      }
+      leaf popularity {
+        config false;
+        type uint32;
+        units copies-sold/year;
+        description 
+          "Number of copies sold in the last 12-month period";
+      }
+      list formats {
+        key format;
+        leaf format {
+          type identityref {
+            base format-i;
+          }
+        }
+        leaf price {
+          type decimal64 {
+            fraction-digits 2;
+          }
+          units local-currency;
+        }
+        container number-of-copies {
+          when 'not(derived-from(../format, "bz:file-i"))';
+          config false;
+          leaf in-stock {
+            type uint32;
+          }
+          leaf reserved {
+            type uint32;
+          }
+          leaf available {
+            type uint32;
+          }
+        }
+        action purchase {
+          input {
+            leaf user {
+              type leafref {
+                path /users/user/name;
+              }
+            }
+            leaf number-of-copies {
+              type uint32 {
+                range 1..999;
+              }
+              default 1;
+            }            
+          }
+          output {
+            choice outcome {
+              case success {
+                leaf success {
+                  type empty;
+                  description
+                    "Order received and will be sent to specified user.
+                     File orders are downloadable at the URL given below.";
+                }
+                leaf delivery-url {
+                  type string;
+                  description
+                    "Download URL for file deliveries.";
+                }
+              }
+              leaf out-of-stock {
+                type empty;
+                description
+                  "Order received, but cannot be delivered at this time. 
+                   A notification will be sent when the item ships.";
+              }
+              leaf failure {
+                type string;
+                description
+                  "Order cancelled, for reason stated here.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  container users {
+    list user {
+      key user-id;
+
+      leaf user-id {
+        type string;
+      }
+      leaf name {
+        type string;
+      }
+      list purchase-history {
+        config false;
+        key "title format";
+        leaf title {
+          type leafref {
+            path /books/book/title;
+          }
+        }
+        leaf format {
+          type leafref {
+            path deref(../title)/../formats/format;
+          }
+        }
+        leaf transaction-date-time {
+          type yang:date-and-time;
+        }
+        leaf copies {
+          type uint32;
+        }
+      }
+    }
+  }
+ 
+  notification shipping {
+    leaf user {
+      type leafref {
+        path /users/user/name;
+      }
+    }
+    leaf title {
+      type leafref {
+        path /books/book/title;
+      }
+    }
+    leaf format {
+      type leafref {
+        path /books/book/formats/format;
+      }
+    }
+    leaf copies {
+      type uint32;
+    }
+  }
+}
