@@ -7,10 +7,6 @@ module bookzone-example {
     prefix yang;
   }
 
-  revision 2018-01-03 {
-    description 
-      "Added action purchase and notification shipping.";
-  }
   revision 2018-01-02 {
     description 
       "Added book formats and authors, see 
@@ -139,49 +135,6 @@ module bookzone-example {
           }
           units local-currency;
         }
-        action purchase {
-          input {
-            leaf user {
-              type leafref {
-                path /users/user/name;
-              }
-            }
-            leaf number-of-copies {
-              type uint32 {
-                range 1..999;
-              }
-              default 1;
-            }            
-          }
-          output {
-            choice outcome {
-              case success {
-                leaf success {
-                  type empty;
-                  description
-                    "Order received and will be sent to specified user.
-                     File orders are downloadable at the URL given below.";
-                }
-                leaf delivery-url {
-                  type string;
-                  description
-                    "Download URL for file deliveries.";
-                }
-              }
-              leaf out-of-stock {
-                type empty;
-                description
-                  "Order received, but cannot be delivered at this time. 
-                   A notification will be sent when the item ships.";
-              }
-              leaf failure {
-                type string;
-                description
-                  "Order cancelled, for reason stated here.";
-              }
-            }
-          }
-        }
       }
     }
   }
@@ -195,28 +148,6 @@ module bookzone-example {
       leaf name {
         type string;
       }
-    }
-  }
- 
-  notification shipping {
-    leaf user {
-      type leafref {
-        path /users/user/name;
-      }
-    }
-    leaf title {
-      type leafref {
-        path /books/book/title;
-      }
-    }
-    leaf format {
-      type leafref {
-        path /books/book/formats/format;
-        // This is not done right, do not copy
-      }
-    }
-    leaf copies {
-      type uint32;
     }
   }
 }
