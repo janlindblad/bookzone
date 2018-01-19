@@ -34,7 +34,7 @@ $(CONFD_DIR)/src/confd/build/include.mk:
 CONFD_FLAGS = --addloadpath $(CONFD_DIR)/etc/confd 
 START_FLAGS ?=
 
-all:	bookzone-example.fxs audiozone-example.fxs \
+all:	bookzone-example.fxs \
 		$(CDB_DIR) ssh-keydir
 	@echo "Build complete"
 
