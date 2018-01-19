@@ -32,25 +32,29 @@ module bookzone-example {
 
   revision 2018-01-05 {
     description
-      "Added authors and customers, see /authors and /customers.";
+      "Added constraints that
+       - author needs to have an accont set before listing a book
+       - number of copies in stock only shows for physical items
+       - makes a book not orderable unless it has a price
+       - book leafrefs are chained correctly";
   }
   revision 2018-01-04 {
     description 
       "Added status information about books and purchases, see
        /books/book/popularity
        /books/book/formats/number-of-copies
-       /customers/customer/purchases";
+       /users/user/purchase-history";
   }
   revision 2018-01-03 {
     description 
-      "Added action request-loan, rpc returned-loan and
-       notification loan-expired.";
+      "Added action purchase and notification shipping.";
   }
   revision 2018-01-02 {
     description 
-      "Added book formats and authors, see 
+      "Added book formats, authors and users, see 
        /books/book/formats
-       /authors";
+       /authors
+       /users";
   }
   revision 2018-01-01 {
     description "Initial revision. A catalog of books.";
@@ -201,10 +205,14 @@ module bookzone-example {
         }
         action purchase {
           input {
+            must "../../price > 0" {
+              error-message "Item not orderable at this time";
+            }
             leaf user {
               type leafref {
                 path /users/user/name;
               }
+              mandatory true;
             }
             leaf number-of-copies {
               type uint32 {
@@ -245,6 +253,20 @@ module bookzone-example {
       }
     }
   }
+
+  grouping title-format-ref {
+    leaf title {
+      type leafref {
+        path /books/book/title;
+      }
+    }
+    leaf format {
+      type leafref {
+        path deref(../title)/../formats/format;
+      }
+    }
+  }
+
   container users {
     list user {
       key user-id;
@@ -258,16 +280,7 @@ module bookzone-example {
       list purchase-history {
         config false;
         key "title format";
-        leaf title {
-          type leafref {
-            path /books/book/title;
-          }
-        }
-        leaf format {
-          type leafref {
-            path deref(../title)/../formats/format;
-          }
-        }
+        uses title-format-ref;
         leaf transaction-date-time {
           type yang:date-and-time;
         }
@@ -284,16 +297,7 @@ module bookzone-example {
         path /users/user/name;
       }
     }
-    leaf title {
-      type leafref {
-        path /books/book/title;
-      }
-    }
-    leaf format {
-      type leafref {
-        path /books/book/formats/format;
-      }
-    }
+    uses title-format-ref;
     leaf copies {
       type uint32;
     }

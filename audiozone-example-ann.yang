@@ -1,6 +1,6 @@
-module bookzone-example-ann {
+module audiozone-example-ann {
   yang-version 1.1;
-  namespace 'http://example.com/ns/bookzone/ann';
+  namespace 'http://example.com/ns/audiozone/ann';
   prefix bz-ann;
 
   import tailf-common {
