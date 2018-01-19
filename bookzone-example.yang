@@ -3,150 +3,29 @@ module bookzone-example {
   namespace 'http://example.com/ns/bookzone';
   prefix bz;
 
-  import ietf-yang-types {
-    prefix yang;
-  }
-
-  revision 2018-01-02 {
-    description 
-      "Added book formats and authors, see 
-       /books/book/formats
-       /authors";
-  }
   revision 2018-01-01 {
     description "Initial revision. A catalog of books.";
   }
 
-  typedef language-type {
-    type enumeration {
-      enum arabic;
-      enum chinese;
-      enum english;
-      enum french;
-      enum swahili;
-      enum swedish;
-      // List not exhaustive in order to save space
-    }
-    description 
-      "Primary language the book consumer needs to master "+
-      "in order to appreciate the book's content";
-  }
-
-  identity format-i {
-    description "Root identity for all book formats";
-  }
-  identity paper {
-    base format-i;
-    description "Physical book printed on paper";
-  }
-  identity audio-cd {
-    base format-i;
-    description "Audiobook delivered as Compact Disc";
-  }
-  identity file-i {
-    base format-i;
-    description "Book delivered as a file";
-  }
-  identity paperback {
-    base paper;
-    description "Physical book with soft covers";
-  }
-  identity hardcover {
-    base paper;
-    description "Physical book with hard covers";
-  }
-  identity mp3 {
-    base file-i;
-    description "Audiobook delivered as MP3 file";
-  }
-  identity pdf {
-    base file-i;
-    description "Digital book delivered as PDF file";
-  }
-  identity epub {
-    base file-i;
-    description "Digital book delivered as EPUB file";
-  }
-
-  typedef ISBN-10-or-13 {
-    type union {    
-      type string {
-        length 10;
-        pattern '[0-9]{9}[0-9X]';
-      }
-      type string {
-        length 13;
-        pattern '97[89][0-9]{10}';
-      }
-    }
-    description
-      "The International Standard Book Number (ISBN) is a unique
-       numeric commercial book identifier.
-
-       An ISBN is assigned to each edition and variation (except 
-       reprintings) of a book. [source: wikipedia]";
-    reference 
-      "https://en.wikipedia.org/wiki/International_Standard_Book_Number";
-  }
-
-  container authors {
-    list author {
-      key name;
-
-      leaf name {
-        type string;
-      }
-      leaf account-id {
-        type uint32 {
-          range 1001..max;
-        }
-      }
-    }
-  }
   container books {
     list book {
       key isbn;
 
       leaf isbn {
-        type ISBN-10-or-13;
+        type string;
       }
       leaf title {
         type string;
         mandatory true;
       }
       leaf author {
-        type leafref {
-          path /authors/author/name;
-        }
-      }
-      leaf language {
-        type language-type;
-      }
-      list formats {
-        key format;
-        leaf format {
-          type identityref {
-            base format-i;
-          }
-        }
-        leaf price {
-          type decimal64 {
-            fraction-digits 2;
-          }
-          units local-currency;
-        }
-      }
-    }
-  }
-  container users {
-    list user {
-      key user-id;
-
-      leaf user-id {
         type string;
       }
-      leaf name {
-        type string;
+      leaf price {
+        type decimal64 {
+          fraction-digits 2;
+        }
+        units local-currency;
       }
     }
   }
