@@ -7,17 +7,9 @@ module bookzone-example {
     prefix yang;
   }
 
-  revision 2018-01-04 {
-    description 
-      "Added status information about books and purchases, see
-       /books/book/popularity
-       /books/book/formats/number-of-copies
-       /users/user/purchase-history";
-  }
   revision 2018-01-03 {
     description 
-      "Added action request-loan, rpc returned-loan and
-       notification loan-expired.";
+      "Added action purchase and notification shipping.";
   }
   revision 2018-01-02 {
     description 
@@ -134,13 +126,6 @@ module bookzone-example {
       leaf language {
         type language-type;
       }
-      leaf popularity {
-        config false;
-        type uint32;
-        units copies-sold/year;
-        description 
-          "Number of copies sold in the last 12-month period";
-      }
       list formats {
         key format;
         leaf format {
@@ -153,18 +138,6 @@ module bookzone-example {
             fraction-digits 2;
           }
           units local-currency;
-        }
-        container number-of-copies {
-          config false;
-          leaf in-stock {
-            type uint32;
-          }
-          leaf reserved {
-            type uint32;
-          }
-          leaf available {
-            type uint32;
-          }
         }
         action purchase {
           input {
@@ -221,27 +194,6 @@ module bookzone-example {
       }
       leaf name {
         type string;
-      }
-      list purchase-history {
-        config false;
-        key "title format";
-        leaf title {
-          type leafref {
-            path /books/book/title;
-          }
-        }
-        leaf format {
-          type leafref {
-            path /books/book/formats/format;
-            // This is not done right, do not copy
-          }
-        }
-        leaf transaction-date-time {
-          type yang:date-and-time;
-        }
-        leaf copies {
-          type uint32;
-        }
       }
     }
   }
