@@ -44,17 +44,10 @@ py-all:	dhcpd.fxs dhcpd_ns.py commands-j.ccl commands-c.ccl \
 
 # Keeping make rules very simple and explicit so you can see what's going on
 
-bookzone-example.fxs: bookzone-example.yang bookzone-example-ann.yang
+bookzone-example.fxs: bookzone-example.yang
 	$(CONFDC) --fail-on-warnings -c \
 						-o $@ \
-						-a bookzone-example-ann.yang \
 						bookzone-example.yang
-
-audiozone-example.fxs: audiozone-example.yang audiozone-example-ann.yang
-	$(CONFDC) --fail-on-warnings -c \
-						-o $@ \
-						-a audiozone-example-ann.yang \
-						audiozone-example.yang
 
 ######################################################################
 clean:	iclean
