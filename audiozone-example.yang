@@ -39,7 +39,7 @@ module audiozone-example {
   }
 
   identity streaming {
-    base bz:file-i;
+    base bz:file-idty;
     description
       "Audiobook streaming.";
   }

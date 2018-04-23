@@ -47,7 +47,9 @@ module bookzone-example {
   }
   revision 2018-01-03 {
     description 
-      "Added action purchase and notification shipping.";
+      "Added action purchase and notification shipping.
+       Created a title-format-ref grouping in order
+       not to repeat the same information multiple times";
   }
   revision 2018-01-02 {
     description 
@@ -75,19 +77,19 @@ module bookzone-example {
       "in order to appreciate the book's content";
   }
 
-  identity format-i {
+  identity format-idty {
     description "Root identity for all book formats";
   }
   identity paper {
-    base format-i;
+    base format-idty;
     description "Physical book printed on paper";
   }
   identity audio-cd {
-    base format-i;
+    base format-idty;
     description "Audiobook delivered as Compact Disc";
   }
-  identity file-i {
-    base format-i;
+  identity file-idty {
+    base format-idty;
     description "Book delivered as a file";
   }
   identity paperback {
@@ -99,15 +101,15 @@ module bookzone-example {
     description "Physical book with hard covers";
   }
   identity mp3 {
-    base file-i;
+    base file-idty;
     description "Audiobook delivered as MP3 file";
   }
   identity pdf {
-    base file-i;
+    base file-idty;
     description "Digital book delivered as PDF file";
   }
   identity epub {
-    base file-i;
+    base file-idty;
     description "Digital book delivered as EPUB file";
   }
 
@@ -148,11 +150,8 @@ module bookzone-example {
   }
   container books {
     list book {
-      key isbn;
+      key title;
 
-      leaf isbn {
-        type ISBN-10-or-13;
-      }
       leaf title {
         type string;
         mandatory true;
@@ -178,20 +177,24 @@ module bookzone-example {
           "Number of copies sold in the last 12-month period";
       }
       list formats {
-        key format;
+        key isbn;
+        leaf isbn {
+          type ISBN-10-or-13;
+        }
         leaf format {
+          mandatory true;
           type identityref {
-            base format-i;
+            base format-idty;
           }
         }
         leaf price {
           type decimal64 {
             fraction-digits 2;
           }
-          units local-currency;
+          units sim-dollar;
         }
         container number-of-copies {
-          when 'not(derived-from(../format, "bz:file-i"))';
+          when 'not(derived-from(../format, "bz:file-idty"))';
           config false;
           leaf in-stock {
             type uint32;
