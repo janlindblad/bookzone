@@ -213,7 +213,7 @@ module bookzone-example {
             }
             leaf user {
               type leafref {
-                path /users/user/name;
+                path /users/user/user-id;
               }
               mandatory true;
             }

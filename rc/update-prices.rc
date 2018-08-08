@@ -1,0 +1,22 @@
+{
+  "book": [
+    {
+      "title": "The Hitchhiker's Guide to the Galaxy",
+      "formats": [
+        {
+          "isbn": "9781400052929",
+          "price": 36.0        
+        }
+      ]
+    },
+    {
+      "title": "I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban",
+      "formats": [
+        {
+          "isbn": "9780297870913",
+          "price": 26.0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+  <action xmlns="urn:ietf:params:xml:ns:yang:1">
+    <books xmlns="http://example.com/ns/bookzone">
+      <book>
+        <title>What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action</title>
+        <formats>
+          <isbn>9781603585835</isbn>
+          <purchase>
+            <user>janl</user>
+          </purchase>
+        </formats>
+      </book>
+    </books>
+  </action>

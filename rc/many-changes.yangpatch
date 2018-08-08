@@ -1,0 +1,69 @@
+<yang-patch xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-patch">
+  <patch-id>many-changes</patch-id>
+  <edit>
+    <edit-id>#1</edit-id>
+    <operation>merge</operation>
+    <target>/books/book=The%20Buried%20Giant</target>
+    <value>
+      <book xmlns="http://example.com/ns/bookzone">
+        <title>The Buried Giant</title>
+        <author>Kazuo Ishiguro</author>
+        <language>english</language>
+        <formats>
+          <isbn>9781467600217</isbn>
+          <format>mp3</format>
+          <price>55</price>
+        </formats>
+      </book>
+    </value>
+  </edit>
+  <edit>
+    <edit-id>#2</edit-id>
+    <operation>create</operation>
+    <target>/books/book=The%20Girl%20with%20the%20Dragon%20Tattoo</target>
+    <value>
+      <book xmlns="http://example.com/ns/bookzone">
+        <title>The Girl with the Dragon Tattoo</title>
+        <author>Stieg Larsson</author>
+        <language>english</language>
+        <formats>
+          <isbn>9781616574819</isbn>
+          <format>mp3</format>
+          <price>45</price>
+        </formats>
+      </book>
+    </value>
+  </edit>
+  <edit>
+    <edit-id>#3</edit-id>
+    <operation>create</operation>
+    <target>/authors/author=Stieg%20Larsson</target>
+    <value>
+      <author xmlns="http://example.com/ns/bookzone">
+        <name>Stieg Larsson</name>
+        <account-id>2004</account-id>
+      </author>
+    </value>
+  </edit>
+  <edit>
+    <edit-id>#4</edit-id>
+    <operation>merge</operation>
+    <target>/books/book=The%20Hitchhiker%27s%20Guide%20to%20the%20Galaxy/formats=9781400052929/price</target>
+    <value>
+      <price xmlns="http://example.com/ns/bookzone">44</price>
+    </value>
+  </edit>
+  <edit>
+    <edit-id>#5</edit-id>
+    <operation>delete</operation>
+    <target>/books/book=The%20Neverending%20Story/formats=9780140386332</target>
+  </edit>
+  <edit>
+    <edit-id>#6</edit-id>
+    <operation>merge</operation>
+    <target>/books/book=The%20Neverending%20Story/formats=9781452656304/price</target>
+    <value>
+      <price xmlns="http://example.com/ns/bookzone">40</price>
+    </value>
+  </edit>
+</yang-patch>

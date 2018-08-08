@@ -1,0 +1,24 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <authors xmlns="http://example.com/ns/bookzone">
+    <author>
+      <name>Douglas Adams</name>
+      <account-id>1010</account-id>
+    </author>
+    <author>
+      <name>Malala Yousafzai</name>
+      <account-id>1011</account-id>
+    </author>
+    <author>
+      <name>Michael Ende</name>
+      <account-id>1001</account-id>
+    </author>
+    <author>
+      <name>Per Espen Stoknes</name>
+      <account-id>1111</account-id>
+    </author>
+    <author>
+      <name>Sun Tzu</name>
+      <account-id>1100</account-id>
+    </author>
+  </authors>
+</config>

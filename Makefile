@@ -1,45 +1,37 @@
 ######################################################################
-# (C) 2018 whoever
+# (C) 2018 Jan Lindblad
 #
-# See the README files for more information
+# See the LICENSE file for license information
+# See the README  file for more information
 ######################################################################
 
 usage:
 	@echo "See README files for more instructions"
 	@echo "make all     Build all example files"
-	@echo "make py-all     Build all example files for Python"
 	@echo "make clean   Remove all built and intermediary files"
 	@echo "make start   Start CONFD daemon and example agent"
-	@echo "make py-start   Start CONFD daemon and example Python agent"
 	@echo "make stop    Stop any CONFD daemon and example agent"
-	@echo "make query   Run query against CONFD"
-	@echo "make cli     Start the CONFD Command Line Interface, J-style"
+	@echo "make queries See list of predefined queries"
 	@echo "make cli-c   Start the CONFD Command Line Interface, C-style"
+	@echo "make cli-j   Start the CONFD Command Line Interface, J-style"
 
 ######################################################################
 # Where is ConfD installed? Make sure CONFD_DIR points it out
-CONFD_DIR ?= ../../..
 
 # Include standard ConfD build definitions and rules
 include $(CONFD_DIR)/src/confd/build/include.mk
 
-# In case CONFD_DIR is not set (correctly), this rule will trigger
-$(CONFD_DIR)/src/confd/build/include.mk:
-	@echo 'Where is ConfD installed? Set $$CONFD_DIR to point it out!'
-	@echo ''
+/src/confd/build/include.mk:
+	$(error CONFD_DIR not set. See README for details.)
 
 ######################################################################
-# Example specific definitions and rules
 
 CONFD_FLAGS = --addloadpath $(CONFD_DIR)/etc/confd 
+PYTHON ?= python
 START_FLAGS ?=
 
-all:	bookzone-example.fxs audiozone-example.fxs \
-		$(CDB_DIR) ssh-keydir
-	@echo "Build complete"
-
-py-all:	dhcpd.fxs dhcpd_ns.py commands-j.ccl commands-c.ccl \
-		$(CDB_DIR) ssh-keydir
+all:	bookzone-example.fxs bookzone-example_ns.py audiozone-example.fxs \
+		$(CDB_DIR) factory-config ssh-keydir
 	@echo "Build complete"
 
 # Keeping make rules very simple and explicit so you can see what's going on
@@ -56,47 +48,52 @@ audiozone-example.fxs: audiozone-example.yang audiozone-example-ann.yang
 						-a audiozone-example-ann.yang \
 						audiozone-example.yang
 
-######################################################################
-clean:	iclean
-	-rm -rf dhcpd.h dhcpd_conf dhcpd.conf *_ns.py *.pyc 2> /dev/null || true
+bookzone-example_ns.py: bookzone-example.fxs
+	$(CONFDC) --emit-python $@ $<
+
+factory-config:
+	# ConfD loads any xml files in the database directory as factory
+	# default config on the first start
+	cp *init.xml $(CDB_DIR)
 
 ######################################################################
-start:  stop start_confd start_subscriber
+clean:	genclean pyclean traceclean dbclean 
+
+genclean: iclean
+
+pyclean:
+	-rm *_ns.py __init__.py *.pyc 2> /dev/null || true
+
+traceclean:
+	-rm *.trace 2> /dev/null || true
+
+dbclean:
+	-rm -f $(CDB_DIR)/*.cdb
+
+######################################################################
+start:  stop start_confd start_apps start_done
 
 start_confd:
 	$(CONFD) -c confd.conf $(CONFD_FLAGS)
+	# Load some operational sample data
+	# Must be done after ConfD has started
+	confd_load -lCO operational-data.xml
 
-start_subscriber:
-	### * In one terminal window, run: tail -f ./confd.log
-	### * In another terminal window, run queries
-	###   (try 'make query' for an example)
-	### * In this window, the DHCP confd daemon now starts:
-	###   (hit Enter to exit)
-	./dhcpd_conf $(START_FLAGS)
+start_apps:
+	$(PYTHON) ./purchase_action.py $(START_FLAGS) &
 
-######################################################################
-py-start:  stop start_confd start_py_subscriber
-
-dhcpd_ns.py: dhcpd.fxs
-	$(CONFDC) --emit-python dhcpd_ns.py dhcpd.fxs
-
-start_py_subscriber:
-	### * In one terminal window, run: tail -f ./confd.log
-	### * In another terminal window, run queries
-	###   (try 'make query' for an example)
-	### * In this window, the DHCP confd daemon now starts:
-	###   (hit Ctrl-c to exit)
-	python ./dhcpd_conf.py $(START_FLAGS)
+start_done:
+	@sleep 1
+	@echo ""
 
 ######################################################################
 stop:
-	### Killing any confd daemon or DHCP confd agents
+	### Killing any confd daemon or confd agents
 	$(CONFD) --stop    || true
-	$(KILLALL) dhcpd_conf || true
 
 ######################################################################
-cli:
-	$(CONFD_DIR)/bin/confd_cli --user=admin --groups=admin \
+cli-j:
+	$(CONFD_DIR)/bin/confd_cli -J --user=admin --groups=admin \
 		--interactive || echo Exit
 
 cli-c:
@@ -104,7 +101,36 @@ cli-c:
 		--interactive  || echo Exit
 
 ######################################################################
-query:
-	$(CONFD_DIR)/bin/netconf-console-tcp cmd-get-dhcpd.xml
+queries:
+	@echo "NETCONF:"
+	@echo "nc-hello       YANG 1.0/1.1 capability and module discovery"
+	@echo "nc-get-config  get-config with XPATH and subtree filter"
+	@echo "RESTCONF:"
+
+
+nc-hello: nc-hello-1.0 nc-hello-1.1
+
+nc-hello-1.0:
+	# List capabilities and YANG 1.0 modules
+	netconf-console --hello
+
+nc-hello-1.1:
+	# Get YANG 1.1 capability and module-set-id
+	netconf-console --hello | grep "urn:ietf:params:netconf:capability:yang-library:1.0"
+	# List YANG 1.1 modules
+	netconf-console --get --xpath /modules-state/module
+
+nc-get-config: nc-get-config-xpath nc-get-config-subtree
+
+nc-get-config-xpath:
+	# Get list of authors and books using XPATH filter
+	netconf-console --get-config --xpath "/authors|books"
+
+nc-get-config-subtree:
+	# Get list of authors and books using subtree filter
+	netconf-console nc/get-config-subtree.nc
+
+#nc-edit-config:
+#	netconf-console nc/get-config-subtree.nc
 
 ######################################################################
