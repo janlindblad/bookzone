@@ -1,0 +1,50 @@
+ <edit-config xmlns:nc='urn:ietf:params:xml:ns:netconf:base:1.0'>
+  <target>
+   <running/>
+  </target>
+  <test-option>test-then-set</test-option>
+  <error-option>rollback-on-error</error-option>
+  <config>
+   <authors xmlns="http://example.com/ns/bookzone"
+            xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <author>
+     <name>Michael Ende</name>
+     <account-id nc:operation="replace">1001</account-id>
+    </author>
+    <author nc:operation="delete">
+     <name>Sun Tzu</name>
+    </author>
+   </authors>
+   <books xmlns="http://example.com/ns/bookzone"
+          xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <book>
+     <title>The Buried Giant</title>
+     <author>Kazuo Ishiguro</author>
+     <language>english</language>
+     <formats>
+      <isbn>9781467600217</isbn>
+      <format>mp3</format>
+      <price>55</price>
+     </formats>
+    </book>
+    <book>
+     <title>The Neverending Story</title>
+     <author>Michael Ende</author>
+     <formats>
+      <isbn>9780525457589</isbn>
+      <price nc:operation="merge">16.5</price>
+     </formats>
+    </book>
+    <book nc:operation="remove">
+     <title>The Art of War</title>
+    </book>
+   </books>
+   <authors xmlns="http://example.com/ns/bookzone"
+            xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <author nc:operation="create">
+     <name>Kazuo Ishiguro</name>
+     <account-id>2017</account-id>
+    </author>
+   </authors>
+  </config>
+ </edit-config>

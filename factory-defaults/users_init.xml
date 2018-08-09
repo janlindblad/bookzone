@@ -1,0 +1,16 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <users xmlns="http://example.com/ns/bookzone">
+    <user>
+      <user-id>janl</user-id>
+      <name>Jan Lindblad</name>
+    </user>
+    <user>
+      <user-id>joe</user-id>
+      <name>Joe Clarke</name>
+    </user>
+    <user>
+      <user-id>bc</user-id>
+      <name>Benoît Claise</name>
+    </user>
+  </users>
+</config>

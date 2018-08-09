@@ -1,0 +1,7 @@
+  <action xmlns="urn:ietf:params:xml:ns:yang:1">
+    <rollback-files xmlns="http://tail-f.com/ns/rollback">
+      <apply-rollback-file>
+        <id>0</id>
+      </apply-rollback-file>
+    </rollback-files>
+  </action>
