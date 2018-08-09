@@ -11,7 +11,7 @@ usage:
 	@echo "make clean      Remove all built and intermediary files"
 	@echo "make start      Start ConfD daemon and example agent"
 	@echo "make stop       Stop any ConfD daemon and example agent"
-	@echo "make reset      make stop -> clean -> all -> start"
+	@echo "make reset      Start over (make stop clean all start)"
 	@echo "make nc-reqs    See list of predefined NETCONF requests"
 	@echo "make rc-reqs    See list of predefined RESTCONF requests"
 	@echo "make cli-c      Start the ConfD Command Line Interface, C-style"
@@ -121,12 +121,6 @@ nc-reqs:
 	@echo "                         (hangs waiting for notifications to arrive)"
 	@echo "make nc-send-notif       sends Trader NETCONF notification"
 
-nc-subscr-trader:
-	netconf-console --create-subscription=Trader
-
-nc-send-notif:
-
-
 nc-hello: nc-hello-1.0 nc-hello-1.1
 
 nc-hello-1.0:
@@ -193,6 +187,54 @@ rc-reqs:
 	@echo "Once ConfD is running, "
 	@echo "you can use these make targets to make RESTCONF requests:"
 	@echo "make rc-hello            YANG 1.0/1.1 capability and module discovery"
+
+rc-hello:
+	# First query the well-known host-meta for the RESTCONF server
+	curl -i -X GET http://localhost:8080/.well-known/host-meta --header "Accept: application/xrd+xml" -u admin:admin
+	# Check for ietf-yang-library
+	curl -i -X GET http://localhost:8080/restconf -u admin:admin
+	# List ietf-yang-library
+	curl -i -X GET http://localhost:8080/restconf/data/modules-state -u admin:admin
+
+rc-root-options:
+	curl -i -X OPTIONS http://localhost:8080/restconf -u admin:admin
+
+rc-get-all-data:
+	curl -i -X GET http://localhost:8080/restconf/data -u admin:admin
+
+rc-get-data1:
+	curl -i -X GET http://localhost:8080/restconf/data?depth=1 -u admin:admin
+
+rc-get-books1:
+	curl -i -X GET http://localhost:8080/restconf/data/books?depth=1 -u admin:admin
+
+rc-get-books2:
+	curl -i -X GET http://localhost:8080/restconf/data/books?depth=2 -u admin:admin
+
+rc-get-books3:
+	curl -i -X GET "http://localhost:8080/restconf/data/books?depth=2&content=config&fields=book/title;book/author " -u admin:admin
+
+rc-get-books4:
+	curl -i -X GET "http://localhost:8080/restconf/data/books?depth=2&fields=book/title;book/author" --header "Accept: application/yang-data+json" -u admin:admin
+
+rc-book-options:
+	curl -i -X OPTIONS "http://localhost:8080/restconf/data/books/book" -u admin:admin
+
+rc-add-author:
+	curl -i -X POST "http://localhost:8080/restconf/data/authors" --header "Content-Type: application/yang-data+json" --header "Accept: application/yang-data+json" --data @rc/add-kauzo-ishiguro.rc.json -u admin:admin
+
+rc-update-price:
+	curl -i -X PUT "http://localhost:8080/restconf/data/bookzone-example:books/book=The%20Hitchhiker%27s%20Guide%20to%20the%20Galaxy/formats=9781400052929/price" --header "Accept: application/yang-data+json" --header "Content-Type: application/yang-data+json" --data '{ "price" : "38.0" }' -u admin:admin
+
+rc-update-prices:
+	curl -i -X PATCH "http://localhost:8080/restconf/data/bookzone-example:books/book" --header "Accept: application/yang-data+json" --header "Content-Type: application/yang-data+json" --data @rc/update-prices.rc.json -u admin:admin
+
+rc-delete-book:
+	curl -i -X DELETE "http://localhost:8080/restconf/data/bookzone-example:books/book=The%20Art%20of%20War" --header "Accept: application/yang-data+json" --header "Content-Type: application/yang-data+json" -u admin:admin
+
+rc-many-changes:
+	curl -i -X PATCH "http://localhost:8080/restconf/data" --header "Accept: application/yang-data+xml" --header "Content-Type: application/yang-patch+xml" --data @rc/many-changes.rc.yangpatch.xml -u admin:admin
+
 
 
 ######################################################################
