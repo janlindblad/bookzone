@@ -28,7 +28,7 @@ module audiozone-example-ann {
  tailf:annotate /bz:books/bz:book/bz:popularity {
     tailf:cdb-oper;
   }
-  tailf:annotate /bz:books/bz:book/bz:formats/bz:number-of-copies {
+  tailf:annotate /bz:books/bz:book/bz:format/bz:number-of-copies {
     tailf:cdb-oper;
   }
   tailf:annotate /bz:users/bz:user/bz:purchase-history {

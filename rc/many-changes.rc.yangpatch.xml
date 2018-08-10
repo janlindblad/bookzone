@@ -9,11 +9,11 @@
         <title>The Buried Giant</title>
         <author>Kazuo Ishiguro</author>
         <language>english</language>
-        <formats>
+        <format>
           <isbn>9781467600217</isbn>
-          <format>mp3</format>
+          <format-id>mp3</format-id>
           <price>55</price>
-        </formats>
+        </format>
       </book>
     </value>
   </edit>
@@ -26,11 +26,11 @@
         <title>The Girl with the Dragon Tattoo</title>
         <author>Stieg Larsson</author>
         <language>english</language>
-        <formats>
+        <format>
           <isbn>9781616574819</isbn>
-          <format>mp3</format>
+          <format-id>mp3</format-id>
           <price>45</price>
-        </formats>
+        </format>
       </book>
     </value>
   </edit>
@@ -48,7 +48,7 @@
   <edit>
     <edit-id>#4</edit-id>
     <operation>merge</operation>
-    <target>/books/book=The%20Hitchhiker%27s%20Guide%20to%20the%20Galaxy/formats=9781400052929/price</target>
+    <target>/books/book=The%20Hitchhiker%27s%20Guide%20to%20the%20Galaxy/format=9781400052929/price</target>
     <value>
       <price xmlns="http://example.com/ns/bookzone">44</price>
     </value>
@@ -56,12 +56,12 @@
   <edit>
     <edit-id>#5</edit-id>
     <operation>delete</operation>
-    <target>/books/book=The%20Neverending%20Story/formats=9780140386332</target>
+    <target>/books/book=The%20Neverending%20Story/format=9780140386332</target>
   </edit>
   <edit>
     <edit-id>#6</edit-id>
     <operation>merge</operation>
-    <target>/books/book=The%20Neverending%20Story/formats=9781452656304/price</target>
+    <target>/books/book=The%20Neverending%20Story/format=9781452656304/price</target>
     <value>
       <price xmlns="http://example.com/ns/bookzone">40</price>
     </value>

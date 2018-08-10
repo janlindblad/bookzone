@@ -3,59 +3,59 @@
     <book>
       <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>
       <author>Malala Yousafzai</author>
-      <formats>
+      <format>
         <isbn>9780297870913</isbn>
-        <format>hardcover</format>
-      </formats>
+        <format-id>hardcover</format-id>
+      </format>
     </book>
     <book>
       <title>The Art of War</title>
       <author>Sun Tzu</author>
       <language>english</language>
-      <formats>
+      <format>
         <isbn>160459893X</isbn>
-        <format>paperback</format>
+        <format-id>paperback</format-id>
         <price>12.75</price>
-      </formats>
+      </format>
     </book>
     <book>
       <title>The Hitchhiker's Guide to the Galaxy</title>
       <author>Douglas Adams</author>
       <language>english</language>
-      <formats>
+      <format>
         <isbn>0330258648</isbn>
-        <format>paperback</format>
+        <format-id>paperback</format-id>
         <price>22.0</price>
-      </formats>
-      <formats>
+      </format>
+      <format>
         <isbn>9781400052929</isbn>
-        <format>hardcover</format>
+        <format-id>hardcover</format-id>
         <price>31.5</price>
-      </formats>
+      </format>
     </book>
     <book>
       <title>The Neverending Story</title>
       <author>Michael Ende</author>
       <language>english</language>
-      <formats>
+      <format>
         <isbn>9780140386332</isbn>
-        <format>paperback</format>
+        <format-id>paperback</format-id>
         <price>8.5</price>
-      </formats>
-      <formats>
+      </format>
+      <format>
         <isbn>9781452656304</isbn>
-        <format>mp3</format>
+        <format-id>mp3</format-id>
         <price>29.95</price>
-      </formats>
+      </format>
     </book>
     <book>
       <title>What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action</title>
       <author>Per Espen Stoknes</author>
-      <formats>
+      <format>
         <isbn>9781603585835</isbn>
-        <format>paperback</format>
+        <format-id>paperback</format-id>
         <price>16.0</price>
-      </formats>
+      </format>
     </book>
   </books>
 </config>

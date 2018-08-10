@@ -3,56 +3,56 @@
   <book>
     <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>
     <popularity>89</popularity>
-    <formats>
+    <format>
       <isbn>9780297870913</isbn>
       <number-of-copies>
         <in-stock>12</in-stock>
         <reserved>2</reserved>
         <available>10</available>
       </number-of-copies>
-    </formats>
+    </format>
   </book>
   <book>
     <title>The Hitchhiker's Guide to the Galaxy</title>
     <popularity>289</popularity>
-    <formats>
+    <format>
       <isbn>0330258648</isbn>
       <number-of-copies>
         <in-stock>32</in-stock>
         <reserved>3</reserved>
         <available>29</available>
       </number-of-copies>
-    </formats>
-    <formats>
+    </format>
+    <format>
       <isbn>9781400052929</isbn>
       <number-of-copies>
         <in-stock>3</in-stock>
         <available>3</available>
       </number-of-copies>
-    </formats>
+    </format>
   </book>
   <book>
     <title>The Neverending Story</title>
     <popularity>47</popularity>
-    <formats>
+    <format>
       <isbn>9780140386332</isbn>
       <number-of-copies>
         <in-stock>4</in-stock>
         <reserved>0</reserved>
         <available>4</available>
       </number-of-copies>
-    </formats>
+    </format>
   </book>
   <book>
     <title>What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action</title>
     <popularity>17</popularity>
-    <formats>
+    <format>
       <isbn>9781603585835</isbn>
       <number-of-copies>
         <in-stock>2</in-stock>
         <reserved>2</reserved>
         <available>0</available>
       </number-of-copies>
-    </formats>
+    </format>
   </book>
 </books>

@@ -21,19 +21,18 @@
      <title>The Buried Giant</title>
      <author>Kazuo Ishiguro</author>
      <language>english</language>
-     <formats>
+     <format>
       <isbn>9781467600217</isbn>
-      <format>mp3</format>
+      <format-id>mp3</format-id>
       <price>55</price>
-     </formats>
+     </format>
     </book>
     <book>
      <title>The Neverending Story</title>
-     <author>Michael Ende</author>
-     <formats>
-      <isbn>9780525457589</isbn>
+     <format>
+      <isbn>9780140386332</isbn>
       <price nc:operation="merge">16.5</price>
-     </formats>
+     </format>
     </book>
     <book nc:operation="remove">
      <title>The Art of War</title>

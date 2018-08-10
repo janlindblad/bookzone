@@ -28,10 +28,10 @@ module bookzone-example-ann {
   tailf:annotate /bz:books/bz:book/bz:popularity {
     tailf:cdb-oper;
   }
-  tailf:annotate /bz:books/bz:book/bz:formats/bz:number-of-copies {
+  tailf:annotate /bz:books/bz:book/bz:format/bz:number-of-copies {
     tailf:cdb-oper;
   }
-  tailf:annotate /bz:books/bz:book/bz:formats/bz:purchase {
+  tailf:annotate /bz:books/bz:book/bz:format/bz:purchase {
     tailf:actionpoint purchase;
   }
   tailf:annotate /bz:users/bz:user/bz:purchase-history {

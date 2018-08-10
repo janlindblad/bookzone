@@ -7,15 +7,15 @@
 
 usage:
 	@echo "See README files for more instructions"
-	@echo "make all        Build all example files"
-	@echo "make clean      Remove all built and intermediary files"
-	@echo "make start      Start ConfD daemon and example agent"
-	@echo "make stop       Stop any ConfD daemon and example agent"
-	@echo "make reset      Start over (make stop clean all start)"
-	@echo "make nc-reqs    See list of predefined NETCONF requests"
-	@echo "make rc-reqs    See list of predefined RESTCONF requests"
-	@echo "make cli-c      Start the ConfD Command Line Interface, C-style"
-	@echo "make cli-j      Start the ConfD Command Line Interface, J-style"
+	@echo "make all        # Build all example files"
+	@echo "make clean      # Remove all built and intermediary files"
+	@echo "make start      # Start ConfD daemon and example agent"
+	@echo "make stop       # Stop any ConfD daemon and example agent"
+	@echo "make reset      # Start over (make stop clean all start)"
+	@echo "make nc-reqs    # See list of predefined NETCONF requests"
+	@echo "make rc-reqs    # See list of predefined RESTCONF requests"
+	@echo "make cli-c      # Start the ConfD Command Line Interface, C-style"
+	@echo "make cli-j      # Start the ConfD Command Line Interface, J-style"
 
 ######################################################################
 # Where is ConfD installed? Make sure CONFD_DIR points it out
@@ -116,17 +116,18 @@ send-notif:
 nc-reqs:
 	@echo "Once ConfD is running, "
 	@echo "you can use these make targets to make NETCONF requests:"
-	@echo "make nc-hello            YANG 1.0/1.1 capability and module discovery"
-	@echo "make nc-get-auths-books  Get-config with XPATH and subtree filter"
-	@echo "make nc-many-changes     Edit-config with many changes (run once)"
-	@echo "make nc-rollback-latest  Rollback latest transaction"
-	@echo "make nc-get-author       Get the author of a single book"
-	@echo "make nc-get-stock        Get the stock qty of certain books"
-	@echo "make nc-purchase-book    Run action to buy a certain book"
-	@echo "make nc-list-streams     Get list of NETCONF notification streams"
-	@echo "make nc-subscr-trader    Subscribe to Trader NETCONF notifications"
-	@echo "                         (hangs waiting for notifications to arrive)"
-	@echo "make send-notif          Sends Trader notification"
+	@echo "make nc-hello            # YANG 1.0/1.1 capability and module discovery"	
+	@echo "make nc-get-config       # Get-config of all configuration data"
+	@echo "make nc-get-auths-books  # Get-config with XPATH and subtree filter"
+	@echo "make nc-many-changes     # Edit-config with many changes (run once)"
+	@echo "make nc-rollback-latest  # Rollback latest transaction"
+	@echo "make nc-get-author       # Get the author of a single book"
+	@echo "make nc-get-stock        # Get the stock qty of certain books"
+	@echo "make nc-purchase-book    # Run action to buy a certain book"
+	@echo "make nc-list-streams     # Get list of NETCONF notification streams"
+	@echo "make nc-subscr-trader    # Subscribe to Trader NETCONF notifications"
+	@echo "                           (hangs waiting for notifications to arrive)"
+	@echo "make send-notif          # Sends Trader notification"
 
 nc-hello: nc-hello-1.0 nc-hello-1.1
 
@@ -139,6 +140,9 @@ nc-hello-1.1:
 	netconf-console --hello | grep "urn:ietf:params:netconf:capability:yang-library:1.0"
 	# List YANG 1.1 modules
 	netconf-console --get --xpath /modules-state/module
+
+nc-get-config:
+	netconf-console --get-config
 
 nc-get-auths-books: nc-get-auths-books-xpath nc-get-auths-books-subtree
 
@@ -170,7 +174,7 @@ nc-get-author:
 	netconf-console --get --xpath '/books/book[title="The Hitchhiker&apos;s Guide to the Galaxy"]/author'
 
 nc-get-stock:
-	netconf-console --get --xpath '/books/book[count(formats) &gt; 1][popularity &lt; 365]/formats/number-of-copies/in-stock'
+	netconf-console --get --xpath '/books/book[count(format) &gt; 1][popularity &lt; 365]/format/number-of-copies/in-stock'
 
 nc-purchase-book:
 	netconf-console --rpc=nc/purchase-book.nc.xml
@@ -180,31 +184,31 @@ nc-list-streams:
 
 nc-subscr-trader:
 	# This session will now hang waiting for notifications to arrive.
-	(echo kill $$$$ \# to stop this waiting; exec netconf-console --create-subscription=Trader)
+	(echo kill $$$$ \# to terminate this subscription; exec netconf-console --create-subscription=Trader)
 
 ######################################################################
 rc-reqs:
 	@echo "Once ConfD is running, "
 	@echo "you can use these make targets to make RESTCONF requests:"
-	@echo "make rc-hello            Find RESTCONF server and supported YANG modules"
-	@echo "make rc-root-options     List valid operations on root node"
-	@echo "make rc-get-all-data     Get all data from server"
-	@echo "make rc-data1            Get data at depth 1"
-	@echo "make rc-books1           Get books at depth 1"
-	@echo "make rc-books2           Get books at depth 2"
-	@echo "make rc-books3           Get books at depth 2, only certain fields"
-	@echo "make rc-books4           Get books at depth 2, only certain fields, as JSON"
-	@echo "make rc-book-options     List valid operations on book node"
-	@echo "make rc-add-author       Post a new author"
-	@echo "make rc-update-price     Put update a book price"
-	@echo "make rc-update-prices    Patch update several book prices"
-	@echo "make rc-delete-book      Delete a book"
-	@echo "make rc-many-changes     Yangpatch several changes in a single transaction"
-	@echo "make rc-purchase-book    Invoke action to purchase a book"
-	@echo "make rc-list-streams     Get list of RESTCONF notification streams"
-	@echo "make rc-subscr-trader    Subscribe to Trader RESTCONF notifications"
-	@echo "                         (hangs waiting for notifications to arrive)"
-	@echo "make send-notif          Sends Trader notification"
+	@echo "make rc-hello            # Find RESTCONF server and supported YANG modules"
+	@echo "make rc-root-options     # List valid operations on root node"
+	@echo "make rc-get-all-data     # Get all data from server"
+	@echo "make rc-get-data1        # Get data at depth 1"
+	@echo "make rc-get-books1       # Get books at depth 1"
+	@echo "make rc-get-books2       # Get books at depth 2"
+	@echo "make rc-get-books3       # Get books at depth 2, only certain fields"
+	@echo "make rc-get-books4       # Get books at depth 2, only certain fields, as JSON"
+	@echo "make rc-book-options     # List valid operations on book node"
+	@echo "make rc-add-author       # Post a new author"
+	@echo "make rc-update-price     # Put update a book price"
+	@echo "make rc-update-prices    # Patch update several book prices"
+	@echo "make rc-delete-book      # Delete a book"
+	@echo "make rc-many-changes     # Yangpatch several changes in a single transaction"
+	@echo "make rc-purchase-book    # Invoke action to purchase a book"
+	@echo "make rc-list-streams     # Get list of RESTCONF notification streams"
+	@echo "make rc-subscr-trader    # Subscribe to Trader RESTCONF notifications"
+	@echo "                           (hangs waiting for notifications to arrive)"
+	@echo "make send-notif          # Sends Trader notification"
 
 rc-hello:
 	# First query the well-known host-meta for the RESTCONF server
@@ -242,7 +246,7 @@ rc-add-author:
 	curl -i -X POST "http://localhost:8080/restconf/data/authors" --header "Content-Type: application/yang-data+json" --header "Accept: application/yang-data+json" --data @rc/add-kauzo-ishiguro.rc.json -u admin:admin
 
 rc-update-price:
-	curl -i -X PUT "http://localhost:8080/restconf/data/bookzone-example:books/book=The%20Hitchhiker%27s%20Guide%20to%20the%20Galaxy/formats=9781400052929/price" --header "Accept: application/yang-data+json" --header "Content-Type: application/yang-data+json" --data '{ "price" : "38.0" }' -u admin:admin
+	curl -i -X PUT "http://localhost:8080/restconf/data/bookzone-example:books/book=The%20Hitchhiker%27s%20Guide%20to%20the%20Galaxy/format=9781400052929/price" --header "Accept: application/yang-data+json" --header "Content-Type: application/yang-data+json" --data '{ "price" : "38.0" }' -u admin:admin
 
 rc-update-prices:
 	curl -i -X PATCH "http://localhost:8080/restconf/data/bookzone-example:books/book" --header "Accept: application/yang-data+json" --header "Content-Type: application/yang-data+json" --data @rc/update-prices.rc.json -u admin:admin
@@ -254,12 +258,14 @@ rc-many-changes:
 	curl -i -X PATCH "http://localhost:8080/restconf/data" --header "Accept: application/yang-data+xml" --header "Content-Type: application/yang-patch+xml" --data @rc/many-changes.rc.yangpatch.xml -u admin:admin
 
 rc-purchase-book:
-	curl -i -X POST "http://localhost:8080/restconf/data/books/book=What%20We%20Think%20About%20When%20We%20Try%20Not%20To%20Think%20About%20Global%20Warming:%20Toward%20a%20New%20Psychology%20of%20Climate%20Action/formats=9781603585835/purchase" --header "Content-Type: application/yang-data+json" --header "Accept: application/yang-data+json" --data @rc/purchase-book.rc.json -u admin:admin
+	curl -i -X POST "http://localhost:8080/restconf/data/books/book=What%20We%20Think%20About%20When%20We%20Try%20Not%20To%20Think%20About%20Global%20Warming:%20Toward%20a%20New%20Psychology%20of%20Climate%20Action/format=9781603585835/purchase" --header "Content-Type: application/yang-data+json" --header "Accept: application/yang-data+json" --data @rc/purchase-book.rc.json -u admin:admin
 
 rc-list-streams:
 	curl -i -X GET http://localhost:8080/restconf/data/ietf-restconf-monitoring:restconf-state/streams -u admin:admin
 
 rc-subscr-trader:
+	# This session will now hang waiting for notifications to arrive.
+	# Hit ^C to terminate the subscription
 	curl -i -X GET http://localhost:8080/restconf/streams/Trader/json -u admin:admin
 
 ######################################################################

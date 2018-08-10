@@ -176,12 +176,12 @@ module bookzone-example {
         description 
           "Number of copies sold in the last 12-month period";
       }
-      list formats {
+      list format {
         key isbn;
         leaf isbn {
           type ISBN-10-or-13;
         }
-        leaf format {
+        leaf format-id {
           mandatory true;
           type identityref {
             base format-idty;
@@ -194,7 +194,7 @@ module bookzone-example {
           units sim-dollar;
         }
         container number-of-copies {
-          when 'not(derived-from(../format, "bz:file-idty"))';
+          when 'not(derived-from(../format-id, "bz:file-idty"))';
           config false;
           leaf in-stock {
             type uint32;
@@ -265,7 +265,7 @@ module bookzone-example {
     }
     leaf format {
       type leafref {
-        path deref(../title)/../formats/format;
+        path deref(../title)/../format/format-id;
       }
     }
   }
