@@ -105,21 +105,28 @@ cli-c:
 	$(CONFD_DIR)/bin/confd_cli -C --user=admin --groups=admin \
 		--interactive  || echo Exit
 
+send-notif:
+	# You are triggering the event notification manually now. 
+	# In the real world, this would be sent automatically when
+	# some application detects the right conditions (i.e. books
+	# are in stock again)
+	$(PYTHON) ./send_notif.py
+
 ######################################################################
 nc-reqs:
 	@echo "Once ConfD is running, "
 	@echo "you can use these make targets to make NETCONF requests:"
 	@echo "make nc-hello            YANG 1.0/1.1 capability and module discovery"
-	@echo "make nc-get-config       get-config with XPATH and subtree filter"
-	@echo "make nc-many-changes     edit-config with many changes (run once)"
-	@echo "make nc-rollback-latest  rollback latest transaction"
-	@echo "make nc-get-author       get the author of a single book"
-	@echo "make nc-get-stock        get the stock qty of certain books"
-	@echo "make nc-purchase-book    run action to buy a certain book"
-	@echo "make nc-list-streams     get list of NETCONF notification streams"
-	@echo "make nc-subscr-trader    subscribe to Trader NETCONF notifications"
+	@echo "make nc-get-auths-books  Get-config with XPATH and subtree filter"
+	@echo "make nc-many-changes     Edit-config with many changes (run once)"
+	@echo "make nc-rollback-latest  Rollback latest transaction"
+	@echo "make nc-get-author       Get the author of a single book"
+	@echo "make nc-get-stock        Get the stock qty of certain books"
+	@echo "make nc-purchase-book    Run action to buy a certain book"
+	@echo "make nc-list-streams     Get list of NETCONF notification streams"
+	@echo "make nc-subscr-trader    Subscribe to Trader NETCONF notifications"
 	@echo "                         (hangs waiting for notifications to arrive)"
-	@echo "make nc-send-notif       sends Trader NETCONF notification"
+	@echo "make send-notif          Sends Trader notification"
 
 nc-hello: nc-hello-1.0 nc-hello-1.1
 
@@ -133,15 +140,15 @@ nc-hello-1.1:
 	# List YANG 1.1 modules
 	netconf-console --get --xpath /modules-state/module
 
-nc-get-config: nc-get-config-xpath nc-get-config-subtree
+nc-get-auths-books: nc-get-auths-books-xpath nc-get-auths-books-subtree
 
-nc-get-config-xpath:
+nc-get-auths-books-xpath:
 	# Get list of authors and books using XPATH filter
 	netconf-console --get-config --xpath "/authors|books"
 
-nc-get-config-subtree:
+nc-get-auths-books-subtree:
 	# Get list of authors and books using subtree filter
-	netconf-console nc/get-config-subtree.nc.xml
+	netconf-console nc/get-authors-and-books-subtrees.nc.xml
 
 nc-many-changes:
 	# 1. Update author Michael Ende's account-id
@@ -175,18 +182,29 @@ nc-subscr-trader:
 	# This session will now hang waiting for notifications to arrive.
 	(echo kill $$$$ \# to stop this waiting; exec netconf-console --create-subscription=Trader)
 
-nc-send-notif:
-	# You are triggering the event notification manually now. 
-	# In the real world, this would be sent automatically when
-	# some application detects the right conditions (i.e. books
-	# are in stock again)
-	$(PYTHON) ./send_notif.py
-
 ######################################################################
 rc-reqs:
 	@echo "Once ConfD is running, "
 	@echo "you can use these make targets to make RESTCONF requests:"
-	@echo "make rc-hello            YANG 1.0/1.1 capability and module discovery"
+	@echo "make rc-hello            Find RESTCONF server and supported YANG modules"
+	@echo "make rc-root-options     List valid operations on root node"
+	@echo "make rc-get-all-data     Get all data from server"
+	@echo "make rc-data1            Get data at depth 1"
+	@echo "make rc-books1           Get books at depth 1"
+	@echo "make rc-books2           Get books at depth 2"
+	@echo "make rc-books3           Get books at depth 2, only certain fields"
+	@echo "make rc-books4           Get books at depth 2, only certain fields, as JSON"
+	@echo "make rc-book-options     List valid operations on book node"
+	@echo "make rc-add-author       Post a new author"
+	@echo "make rc-update-price     Put update a book price"
+	@echo "make rc-update-prices    Patch update several book prices"
+	@echo "make rc-delete-book      Delete a book"
+	@echo "make rc-many-changes     Yangpatch several changes in a single transaction"
+	@echo "make rc-purchase-book    Invoke action to purchase a book"
+	@echo "make rc-list-streams     Get list of RESTCONF notification streams"
+	@echo "make rc-subscr-trader    Subscribe to Trader RESTCONF notifications"
+	@echo "                         (hangs waiting for notifications to arrive)"
+	@echo "make send-notif          Sends Trader notification"
 
 rc-hello:
 	# First query the well-known host-meta for the RESTCONF server
@@ -235,6 +253,13 @@ rc-delete-book:
 rc-many-changes:
 	curl -i -X PATCH "http://localhost:8080/restconf/data" --header "Accept: application/yang-data+xml" --header "Content-Type: application/yang-patch+xml" --data @rc/many-changes.rc.yangpatch.xml -u admin:admin
 
+rc-purchase-book:
+	curl -i -X POST "http://localhost:8080/restconf/data/books/book=What%20We%20Think%20About%20When%20We%20Try%20Not%20To%20Think%20About%20Global%20Warming:%20Toward%20a%20New%20Psychology%20of%20Climate%20Action/formats=9781603585835/purchase" --header "Content-Type: application/yang-data+json" --header "Accept: application/yang-data+json" --data @rc/purchase-book.rc.json -u admin:admin
 
+rc-list-streams:
+	curl -i -X GET http://localhost:8080/restconf/data/ietf-restconf-monitoring:restconf-state/streams -u admin:admin
+
+rc-subscr-trader:
+	curl -i -X GET http://localhost:8080/restconf/streams/Trader/json -u admin:admin
 
 ######################################################################

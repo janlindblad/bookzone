@@ -10,6 +10,7 @@
       <running/>
     </source>
     <filter type="subtree">
+      <authors xmlns="http://example.com/ns/bookzone"/>
       <books xmlns="http://example.com/ns/bookzone"/>
     </filter>
   </get-config>

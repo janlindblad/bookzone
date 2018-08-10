@@ -1,0 +1,32 @@
+module bookzone-example {
+  yang-version 1.1;
+  namespace 'http://example.com/ns/bookzone';
+  prefix bz;
+
+  revision 2018-01-01 {
+    description "Initial revision. A catalog of books.";
+  }
+
+  container books {
+    list book {
+      key title;
+
+      leaf title {
+        type string;
+      }
+      leaf isbn {
+        type string;
+        mandatory true;
+      }
+      leaf author {
+        type string;
+      }
+      leaf price {
+        type decimal64 {
+          fraction-digits 2;
+        }
+        units sim-dollar;
+      }
+    }
+  }
+}
