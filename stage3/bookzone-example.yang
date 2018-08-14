@@ -7,50 +7,6 @@ module bookzone-example {
     prefix yang;
   }
 
-  organization
-    "BookZone, a fictive book store chain";
-
-  contact
-    "YANG book project:   https://github.com/janlindblad/bookzone
-
-     Editor:   Jan Lindblad
-               <mailto:janl@tail-f.com>";
-
-  description 
-    "BookZone defines this model to provide a standard interface for
-     inventory browser and management applications.
-
-     Copyright (c) 2018 the YANG book project and the persons 
-     identified as authors of the code.  All rights reserved.
-
-     Redistribution and use in source and binary forms, with or
-     without modification, is permitted pursuant to, and subject
-     to the license terms contained in, the Simplified BSD License
-     set forth in Section 4.c of the IETF Trust's Legal Provisions
-     Relating to IETF Documents
-     (http://trustee.ietf.org/license-info).";
-
-  revision 2018-01-05 {
-    description
-      "Added constraints that
-       - author needs to have an accont set before listing a book
-       - number of copies in stock only shows for physical items
-       - makes a book not orderable unless it has a price
-       - book leafrefs are chained correctly
-       Added /users/user/payment-methods and a way to choose which
-       one to use in action purchase.";
-  }
-  revision 2018-01-04 {
-    description 
-      "Added status information about books and purchases, see
-       /books/book/popularity
-       /books/book/formats/number-of-copies
-       /users/user/purchase-history
-       Turned reference to book title & format
-       into a grouping, updated references in
-       /users/user/purchase
-       /shipping";
-  }
   revision 2018-01-03 {
     description 
       "Added action purchase and notification shipping.";
@@ -139,19 +95,6 @@ module bookzone-example {
       "https://en.wikipedia.org/wiki/International_Standard_Book_Number";
   }
 
-  grouping title-format-ref {
-    leaf title {
-      type leafref {
-        path /books/book/title;
-      }
-    }
-    leaf format {
-      type leafref {
-        path deref(../title)/../format/format-id;
-      }
-    }
-  }
-
   container authors {
     list author {
       key name;
@@ -178,26 +121,12 @@ module bookzone-example {
         type leafref {
           path /authors/author/name;
         }
-        must 'deref(current())/../account-id' {
-          error-message 
-            "Author does not yet have an account, add account before
-             adding titles by this author.";
-        }
-        mandatory true;
       }
       leaf language {
         type language-type;
       }
-      leaf popularity {
-        config false;
-        type uint32;
-        units copies-sold/year;
-        description 
-          "Number of copies sold in the last 12-month period";
-      }
       list format {
         key isbn;
-        unique format-id;
         leaf isbn {
           type ISBN-10-or-13;
         }
@@ -213,19 +142,6 @@ module bookzone-example {
           }
           units sim-dollar;
         }
-        container number-of-copies {
-          when 'not(derived-from(../format-id, "bz:file-idty"))';
-          config false;
-          leaf in-stock {
-            type uint32;
-          }
-          leaf reserved {
-            type uint32;
-          }
-          leaf available {
-            type uint32;
-          }
-        }
       }
     }
   }
@@ -240,43 +156,24 @@ module bookzone-example {
       leaf name {
         type string;
       }
-      container payment-methods {
-        list payment-method {
-          key "method id";
-          leaf method {
-            type enumeration {
-              enum bookzone-account;
-              enum credit-card;
-              enum paypal;
-              enum klarna;
-            }
-          }
-          leaf id {
-            type string;
-          }
-        }
-      }
       action purchase {
         input {
-          uses title-format-ref;
+          leaf title {
+            type leafref {
+              path /books/book/title;
+            }
+          }
+          leaf format {
+            type leafref {
+              path /books/book/format/format-id;
+              // Reviewer note: This should be improved
+            }
+          }
           leaf number-of-copies {
             type uint32 {
               range 1..999;
             }
-            default 1;
-          }
-          container payment {
-            leaf method {
-              type leafref {
-                path ../../../payment-methods/payment-method/method;
-              }
-            }
-            leaf id {
-              type leafref {
-                path deref(../method)/../id;
-              }
-            }
-          }
+          }            
         }
         output {
           choice outcome {
@@ -307,17 +204,6 @@ module bookzone-example {
           }
         }
       }
-      list purchase-history {
-        config false;
-        key "title format";
-        uses title-format-ref;
-        leaf transaction-date-time {
-          type yang:date-and-time;
-        }
-        leaf copies {
-          type uint32;
-        }
-      }
     }
   }
  
@@ -327,7 +213,17 @@ module bookzone-example {
         path /users/user/name;
       }
     }
-    uses title-format-ref;
+    leaf title {
+      type leafref {
+        path /books/book/title;
+      }
+    }
+    leaf format {
+      type leafref {
+        path /books/book/format/format-id;
+        // Reviewer note: This should be improved
+      }
+    }
     leaf number-of-copies {
       type uint32;
     }

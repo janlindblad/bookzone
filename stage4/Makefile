@@ -7,13 +7,13 @@
 
 usage:
 	@echo "See README files for more instructions"
-	@echo "make all        Build all example files"
-	@echo "make clean      Remove all built and intermediary files"
-	@echo "make start      Start ConfD daemon and example agent"
-	@echo "make stop       Stop any ConfD daemon and example agent"
-	@echo "make reset      Start over (make stop clean all start)"
-	@echo "make cli-c      Start the ConfD Command Line Interface, C-style"
-	@echo "make cli-j      Start the ConfD Command Line Interface, J-style"
+	@echo "make all        # Build all example files"
+	@echo "make clean      # Remove all built and intermediary files"
+	@echo "make start      # Start ConfD daemon and example agent"
+	@echo "make stop       # Stop any ConfD daemon and example agent"
+	@echo "make reset      # Start over (make stop clean all start)"
+	@echo "make cli-c      # Start the ConfD Command Line Interface, C-style"
+	@echo "make cli-j      # Start the ConfD Command Line Interface, J-style"
 
 ######################################################################
 # Where is ConfD installed? Make sure CONFD_DIR points it out
@@ -30,7 +30,7 @@ CONFD_FLAGS = --addloadpath $(CONFD_DIR)/etc/confd
 PYTHON ?= python
 START_FLAGS ?=
 
-all:	bookzone-example.fxs \
+all:	bookzone-example.fxs bookzone_example_ns.py \
 		$(CDB_DIR) copy-factory-defaults ssh-keydir
 	@echo "Build complete"
 
@@ -38,10 +38,14 @@ reset: stop clean all start
 
 # Keeping make rules very simple and explicit so you can see what's going on
 
-bookzone-example.fxs: bookzone-example.yang
+bookzone-example.fxs: bookzone-example.yang bookzone-example-ann.yang
 	$(CONFDC) --fail-on-warnings -c \
 						-o $@ \
+						-a bookzone-example-ann.yang \
 						bookzone-example.yang
+
+bookzone_example_ns.py: bookzone-example.fxs
+	$(CONFDC) --emit-python $@ $<
 
 copy-factory-defaults:
 	# ConfD will load any XML files in the database directory as 
@@ -63,10 +67,21 @@ dbclean:
 	-rm -f $(CDB_DIR)/*.cdb
 
 ######################################################################
-start:  stop start_confd
+start:  stop start_confd start_apps start_done
 
 start_confd:
 	$(CONFD) -c confd.conf $(CONFD_FLAGS)
+	# Load some operational sample data
+	# Must be done after ConfD has started
+	confd_load -lCO operational-data.xml
+
+start_apps:
+	PYTHONPATH=".:$$PYTHONPATH" $(PYTHON) ./purchase_action.py $(START_FLAGS) &
+
+start_done:
+	# Give the purchase action a moment to start in the background
+	@sleep 1
+	@echo ""
 
 ######################################################################
 stop:
@@ -81,5 +96,12 @@ cli-j:
 cli-c:
 	$(CONFD_DIR)/bin/confd_cli -C --user=admin --groups=admin \
 		--interactive  || echo Exit
+
+send-notif:
+	# You are triggering the event notification manually now. 
+	# In the real world, this would be sent automatically when
+	# some application detects the right conditions (i.e. books
+	# are in stock again)
+	$(PYTHON) ./send_notif.py
 
 ######################################################################

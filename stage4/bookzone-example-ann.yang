@@ -13,5 +13,13 @@ module bookzone-example-ann {
   description
     "Implementation annotation module for the bookzone-example YANG module";
 
-  
+  tailf:annotate /bz:books/bz:book/bz:popularity {
+    tailf:cdb-oper;
+  }
+  tailf:annotate /bz:books/bz:book/bz:format/bz:number-of-copies {
+    tailf:cdb-oper;
+  }
+  tailf:annotate /bz:users/bz:user/bz:purchase-history {
+    tailf:cdb-oper;
+  }
 }

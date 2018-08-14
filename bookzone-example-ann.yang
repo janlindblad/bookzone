@@ -31,7 +31,7 @@ module bookzone-example-ann {
   tailf:annotate /bz:books/bz:book/bz:format/bz:number-of-copies {
     tailf:cdb-oper;
   }
-  tailf:annotate /bz:books/bz:book/bz:format/bz:purchase {
+  tailf:annotate /bz:users/bz:user/bz:purchase {
     tailf:actionpoint purchase;
   }
   tailf:annotate /bz:users/bz:user/bz:purchase-history {

@@ -1,0 +1,17 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <users xmlns="http://example.com/ns/bookzone">
+    <user>
+      <user-id>janl</user-id>
+      <payment-methods>
+        <payment-method>
+          <method>paypal</method>
+          <id>4711.1234.0000.1234</id>
+        </payment-method>
+        <payment-method>
+          <method>klarna</method>
+          <id>1234.4711.1234.0001</id>
+        </payment-method>
+      </payment-methods>
+    </user>
+  </users>
+</config>

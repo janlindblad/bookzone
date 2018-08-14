@@ -18,12 +18,18 @@ from bookzone_example_ns import ns
 
 def send_shipping_notif(stream, user, title, fmt, copies):
   values = [
-    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_shipping), confd.Value((ns.bz_shipping, ns.hash), confd.C_XMLBEGIN)),
-    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_user),     confd.Value(user)),
-    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_title),    confd.Value(title)),
-    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_format),   confd.Value((ns.hash, fmt), confd.C_IDENTITYREF)),
-    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_copies),   confd.Value(copies, confd.C_UINT32)),
-    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_shipping), confd.Value((ns.bz_shipping, ns.hash), confd.C_XMLEND))
+    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_shipping),
+      confd.Value((ns.bz_shipping, ns.hash), confd.C_XMLBEGIN)),
+    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_user),     
+      confd.Value(user)),
+    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_title),    
+      confd.Value(title)),
+    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_format),   
+      confd.Value((ns.hash, fmt), confd.C_IDENTITYREF)),
+    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_number_of_copies),   
+      confd.Value(copies, confd.C_UINT32)),
+    confd.TagValue(confd.XmlTag(ns.hash, ns.bz_shipping), 
+      confd.Value((ns.bz_shipping, ns.hash), confd.C_XMLEND))
   ]
   gm = time.gmtime(time.time())
   now = confd.DateTime(gm.tm_year, gm.tm_mon, gm.tm_mday, 
