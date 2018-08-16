@@ -173,7 +173,7 @@ module bookzone-example {
             type uint32 {
               range 1..999;
             }
-          }            
+          }
         }
         output {
           choice outcome {

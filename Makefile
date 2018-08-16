@@ -12,8 +12,8 @@ usage:
 	@echo "make start      # Start ConfD daemon and example agent"
 	@echo "make stop       # Stop any ConfD daemon and example agent"
 	@echo "make reset      # Start over (make stop clean all start)"
-	@echo "make nc-reqs    # See list of predefined NETCONF requests"
-	@echo "make rc-reqs    # See list of predefined RESTCONF requests"
+	@echo "make nc         # See list of predefined NETCONF requests"
+	@echo "make rc         # See list of predefined RESTCONF requests"
 	@echo "make cli-c      # Start the ConfD Command Line Interface, C-style"
 	@echo "make cli-j      # Start the ConfD Command Line Interface, J-style"
 
@@ -27,6 +27,7 @@ include $(CONFD_DIR)/src/confd/build/include.mk
 	$(error CONFD_DIR not set. See README for details.)
 
 ######################################################################
+.PHONY: clean all start stop rc nc
 
 CONFD_FLAGS = --addloadpath $(CONFD_DIR)/etc/confd 
 PYTHON ?= python
@@ -113,7 +114,7 @@ send-notif:
 	$(PYTHON) ./send_notif.py
 
 ######################################################################
-nc-reqs:
+nc:
 	@echo "Once ConfD is running, "
 	@echo "you can use these make targets to make NETCONF requests:"
 	@echo "make nc-hello            # YANG 1.0/1.1 capability and module discovery"	
@@ -187,7 +188,7 @@ nc-subscr-trader:
 	(echo kill $$$$ \# to terminate this subscription; exec netconf-console --create-subscription=Trader)
 
 ######################################################################
-rc-reqs:
+rc:
 	@echo "Once ConfD is running, "
 	@echo "you can use these make targets to make RESTCONF requests:"
 	@echo "make rc-hello            # Find RESTCONF server and supported YANG modules"
@@ -258,7 +259,7 @@ rc-many-changes:
 	curl -i -X PATCH "http://localhost:8080/restconf/data" --header "Accept: application/yang-data+xml" --header "Content-Type: application/yang-patch+xml" --data @rc/many-changes.rc.yangpatch.xml -u admin:admin
 
 rc-purchase-book:
-	curl -i -X POST "http://localhost:8080/restconf/data/books/book=What%20We%20Think%20About%20When%20We%20Try%20Not%20To%20Think%20About%20Global%20Warming:%20Toward%20a%20New%20Psychology%20of%20Climate%20Action/format=9781603585835/purchase" --header "Content-Type: application/yang-data+json" --header "Accept: application/yang-data+json" --data @rc/purchase-book.rc.json -u admin:admin
+	curl -i -X POST "http://localhost:8080/restconf/data/users/user=janl/purchase" --header "Content-Type: application/yang-data+json" --header "Accept: application/yang-data+json" --data @rc/purchase-book.rc.json -u admin:admin
 
 rc-list-streams:
 	curl -i -X GET http://localhost:8080/restconf/data/ietf-restconf-monitoring:restconf-state/streams -u admin:admin

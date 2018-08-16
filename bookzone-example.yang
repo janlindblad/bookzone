@@ -180,8 +180,10 @@ module bookzone-example {
         }
         must 'deref(current())/../account-id' {
           error-message 
-            "Author does not yet have an account, add account before
-             adding titles by this author.";
+            "This author does not yet have an account-id defined. 
+             Books cannot be added for authors lacking one.
+             The Finance Department is responsible for assigning
+             account-id's to authors.";
         }
         mandatory true;
       }
@@ -258,6 +260,9 @@ module bookzone-example {
       }
       action purchase {
         input {
+          must "deref(format)/../price>0" {
+            error-message "Item not orderable at this time";
+          }
           uses title-format-ref;
           leaf number-of-copies {
             type uint32 {

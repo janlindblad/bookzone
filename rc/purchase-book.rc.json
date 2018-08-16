@@ -1,6 +1,10 @@
 {
   "bookzone-example:input" : {
-    "user" : "janl"
+    "title" : "What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action",
+    "format": "paperback",
+    "payment": {
+      "method": "paypal",
+      "id": "4711.1234.0000.1234"
+    }
   }
 }
-

@@ -14,7 +14,7 @@ module audiozone-example {
     "AudioZone, a subsidary of the fictive book store chain BookZone";
 
   contact
-    "YANG book project:   <http://FIXME>
+    "YANG book project:   https://github.com/janlindblad/bookzone
 
      Editor:   Jan Lindblad
                <mailto:janl@tail-f.com>";

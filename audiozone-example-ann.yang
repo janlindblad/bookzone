@@ -23,6 +23,17 @@ module audiozone-example-ann {
         }
       }
     }
+    tailf:annotate-statement container[name='users'] {
+      tailf:annotate-statement list[name='user'] {
+        tailf:annotate-statement action[name='purchase'] {
+          tailf:annotate-statement input {
+            tailf:annotate-statement must[value='deref(format)/../price>0'] {
+              tailf:dependency /bz:books/bz:book/bz:format/bz:price;
+            }
+          }
+        }
+      }
+    }
   }
   
  tailf:annotate /bz:books/bz:book/bz:popularity {

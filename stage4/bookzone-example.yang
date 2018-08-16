@@ -251,7 +251,7 @@ module bookzone-example {
       }
     }
   }
- 
+
   notification shipping {
     leaf user {
       type leafref {
