@@ -1,0 +1,97 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{$DEVICE}</name>
+      <config>
+
+        <!-- CISCO XE1671 -->
+        <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+          <vrf>
+            <definition tags="merge">
+              <name>{/name}</name>
+              <rd>300:{$VLAN_ID}</rd>
+              <address-family>
+                <ipv4/>
+              </address-family>
+              <route-target>
+                <export>
+                  <asn-ip>300:{$VLAN_ID}</asn-ip>
+                </export>
+                <import>
+                  <asn-ip>300:{$VLAN_ID}</asn-ip>
+                </import>
+              </route-target>
+            </definition>
+          </vrf>
+          <interface tags="nocreate">
+            <GigabitEthernet>
+              <name>{$INTERFACE}</name>
+              <description tags="merge">connection to {/name}</description>
+              <!--shutdown/-->
+              <vrf tags="merge">
+                <forwarding>{/name}</forwarding>
+              </vrf>
+              <ip tags="merge">
+                <address>
+                  <primary>
+                    <address>{$ADDRESS}</address>
+                    <mask>{$MASK}</mask>
+                  </primary>
+                </address>
+              </ip>
+              <mop tags="merge">
+                <enabled>false</enabled>
+                <sysid>false</sysid>
+              </mop>
+              <negotiation xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-ethernet" tags="merge">
+                <auto>true</auto>
+              </negotiation>
+            </GigabitEthernet>
+          </interface>
+        </native>
+        <!-- END CISCO XE1671 -->
+
+        <!-- Juniper Junos18 -->
+        <configuration xmlns="http://yang.juniper.net/junos/conf/root">
+          <interfaces xmlns="http://yang.juniper.net/junos/conf/interfaces">
+            <interface tags="nocreate">
+              <name>{$INTERFACE}</name>
+              <no-traps tags="merge"></no-traps>
+              <vlan-tagging tags="merge"></vlan-tagging>
+              <unit tags="merge">
+                <name>{$VLAN_ID}</name>
+                <description>connection to {/name}</description>
+                <vlan-id>{$VLAN_ID}</vlan-id>
+                <family>
+                  <inet>
+                    <address>
+                      <name>{$ADDRESS}/{$MASK_LEN}</name>
+                    </address>
+                  </inet>
+                </family>
+              </unit>
+            </interface>
+          </interfaces>
+          <routing-instances xmlns="http://yang.juniper.net/junos/conf/routing-instances">
+            <instance>
+              <name>{/name}</name>
+              <instance-type>vrf</instance-type>
+              <interface>
+                <name>{$INTERFACE}.{$VLAN_ID}</name>
+              </interface>
+              <route-distinguisher>
+                <rd-type>300:{$VLAN_ID}</rd-type>
+              </route-distinguisher>
+              <vrf-import>{/name}-IMP</vrf-import>
+              <vrf-export>{/name}-EXP</vrf-export>
+              <vrf-table-label>
+              </vrf-table-label>
+            </instance>
+          </routing-instances>
+        </configuration>
+        <!-- END Juniper Junos18 -->
+
+      </config>
+    </device>
+  </devices>
+</config-template>

@@ -1,0 +1,801 @@
+module netrounds-ncc {
+
+  namespace "http://com/netrounds/ncc";
+  prefix netrounds-ncc;
+
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  typedef vlan-id-t {
+    type uint32 {
+      range "1..4094";
+    }
+  }
+
+  typedef percent-t {
+    type decimal64 {
+      fraction-digits 2;
+      range "0..100";
+    }
+  }
+
+  typedef direction-t {
+    type enumeration {
+      enum bidirectional;
+      enum down;
+      enum up;
+    }
+  }
+
+  typedef setup-type-t {
+    type enumeration {
+      enum client-server;
+      enum full-mesh;
+    }
+  }
+
+  typedef speed-t {
+    type enumeration {
+      enum auto;
+      enum 10-half-duplex;
+      enum 10-full-duplex;
+      enum 100-half-duplex;
+      enum 100-full-duplex;
+      enum 1000-full-duplex;
+    }
+  }
+
+  typedef test-status-t {
+    type enumeration {
+      enum scheduled;
+      enum waiting;
+      enum running;
+      enum error;
+      enum passed;
+      enum failed;
+      enum canceled;
+    }
+  }
+
+  typedef parameter-type-t {
+    type enumeration {
+      enum integer {
+        tailf:code-name "parameter-type-integer";
+      }
+      enum float {
+        tailf:code-name "parameter-type-float";
+      }
+      enum string {
+        tailf:code-name "parameter-type-string";
+      }
+      enum test-agent-interfaces {
+        tailf:code-name "parameter-type-test-agent-interfaces";
+      }
+      enum twamp-reflectors {
+        tailf:code-name "parameter-type-twamp-reflectors";
+      }
+      enum y1731-meps {
+        tailf:code-name "parameter-type-y1731-meps";
+      }
+    }
+  }
+
+  typedef monitor-sla-status-t {
+    type enumeration {
+      enum unknown;
+      enum good;
+      enum acceptable;
+      enum bad;
+    }
+  }
+
+  typedef test-agent-status-t {
+    type enumeration {
+      enum configured {
+        tailf:code-name "test-agent-status-configured";
+      }
+      enum online {
+        tailf:code-name "test-agent-status-online";
+      }
+      enum offline {
+        tailf:code-name "test-agent-status-offline";
+      }
+    }
+  }
+
+  grouping ipv4-config {
+    leaf ipv4-type {
+      type enumeration {
+        enum none;
+        enum static;
+        enum dhcp;
+      }
+      default none;
+    }
+
+    container ipv4 {
+      when "../ipv4-type = 'static'";
+
+      leaf address {
+        type tailf:ipv4-address-and-prefix-length;
+        mandatory true;
+      }
+
+      list routes {
+        key network;
+
+        leaf network {
+          type tailf:ipv4-address-and-prefix-length;
+        }
+        leaf gateway {
+          type inet:ipv4-address;
+          mandatory true;
+        }
+      }
+
+      leaf-list dns-servers {
+        type inet:ipv4-address;
+      }
+    }
+
+    // TODO: dhcp
+  }
+
+  grouping ipv6-config {
+    leaf ipv6-type {
+      type enumeration {
+        enum none;
+        enum static;
+        enum dhcp;
+        enum slaac;
+      }
+      default none;
+    }
+
+    container ipv6 {
+      when "../ipv6-type = 'static'";
+
+      leaf address {
+        type tailf:ipv6-address-and-prefix-length;
+        mandatory true;
+      }
+      list routes {
+        key network;
+
+        leaf network {
+          type tailf:ipv6-address-and-prefix-length;
+        }
+        leaf gateway {
+          type inet:ipv6-address;
+          mandatory true;
+        }
+      }
+
+      // TODO: dhcp
+    }
+  }
+
+  grouping test-agent-info {
+    leaf description {
+      type string;
+    }
+  }
+
+  grouping test-agent-ntp-config {
+    container ntp {
+      leaf interface {
+        type leafref {
+          path "../../netrounds-ncc:interfaces/netrounds-ncc:interface/netrounds-ncc:name";
+        }
+        mandatory true;
+        must "../../netrounds-ncc:interfaces/netrounds-ncc:interface[netrounds-ncc:name=current()]/netrounds-ncc:interface-config/netrounds-ncc:ipv4-type != 'none'";
+      }
+      leaf server {
+        type union {
+          type inet:ipv4-address;
+          type inet:domain-name;
+        }
+        mandatory true;
+      }
+    }
+  }
+
+  grouping test-agent-interfaces {
+    leaf management-interface {
+      type leafref {
+        path "../netrounds-ncc:interfaces/netrounds-ncc:interface/netrounds-ncc:name";
+      }
+      must "../netrounds-ncc:interfaces/netrounds-ncc:interface[netrounds-ncc:name=current()]/netrounds-ncc:interface-config/netrounds-ncc:ipv4-type != 'none'";
+      mandatory true;
+    }
+
+    container interfaces {
+      list interface {
+        key "name";
+        leaf name {
+          type string {
+            // eth0, eth0.1, br-ex
+            pattern "[a-zA-Z0-9-]+(\.[0-9]+)?";
+          }
+          must "(../interface-type!='vlan' or current() = concat(../vlan/parent, '.', string(../vlan/id)))";
+        }
+
+        leaf description { type string; }
+
+        leaf interface-type {
+          type enumeration {
+            enum physical {
+              tailf:code-name "interface-physical";
+            }
+            enum vlan {
+              tailf:code-name "interface-vlan";
+            }
+            enum bridge {
+              tailf:code-name "interface-bridge";
+            }
+          }
+          default physical;
+        }
+
+        leaf mac {
+          description "When not set the interfaces built-in address is used";
+          type yang:mac-address;
+        }
+        leaf mtu {
+          type uint16;
+          default 1500;
+        }
+        leaf speed {
+          type speed-t;
+          default auto;
+          when "../interface-type = 'physical'";
+
+        }
+
+        container bridge {
+          when "../interface-type = 'bridge'";
+
+          container members {
+            list member {
+              key "interface";
+
+              leaf interface {
+                type leafref {
+                  path "../../../../../netrounds-ncc:interface/netrounds-ncc:name";
+                }
+                must "current() = ../../../../../netrounds-ncc:interface[netrounds-ncc:interface-type='physical']/netrounds-ncc:name";
+              }
+            }
+          }
+        }
+
+        container vlan {
+          when "../interface-type = 'vlan'";
+
+          leaf id {
+            type vlan-id-t;
+            mandatory true;
+          }
+
+          leaf parent {
+            type leafref {
+              path "../../../netrounds-ncc:interface/netrounds-ncc:name";
+            }
+            must "current() = ../../../netrounds-ncc:interface[netrounds-ncc:interface-type='physical' or netrounds-ncc:interface-type='bridge']/netrounds-ncc:name";
+            mandatory true;
+          }
+        }
+
+        container interface-config {
+          // only allow configuration when not part of a bridge
+          when "not(../netrounds-ncc:bridge/netrounds-ncc:members=current()/../netrounds-ncc:name)";
+          uses ipv4-config;
+          uses ipv6-config;
+        }
+      }
+    }
+  }
+
+  grouping monitor-status {
+    container status {
+      config false;
+
+      grouping monitor-status-value {
+        leaf status {
+          type monitor-sla-status-t;
+        }
+        leaf status-value {
+          type percent-t;
+        }
+      }
+
+      container last-15-minutes {
+        uses monitor-status-value;
+      }
+      container last-hour {
+        uses monitor-status-value;
+      }
+      container last-24-hours {
+        uses monitor-status-value;
+      }
+    }
+  }
+
+  grouping test-parameters {
+    container parameters {
+      list parameter {
+        key key;
+        leaf key {
+          type string;
+        }
+
+        choice value-type {
+          mandatory true;
+
+          leaf integer {
+            type int64;
+          }
+          leaf float {
+            type decimal64 {
+              fraction-digits 4;
+            }
+          }
+          leaf string {
+            type string;
+          }
+
+          container test-agent-interfaces {
+            list test-agent-interface {
+              key "account test-agent interface";
+              leaf account {
+                type leafref {
+                  path "../../../../../account";
+                }
+              }
+              leaf test-agent {
+                type leafref {
+                  path "deref(../../../../../account)/../netrounds-ncc:test-agents/netrounds-ncc:test-agent/netrounds-ncc:name";
+                }
+              }
+              leaf interface {
+                type leafref {
+                  path "deref(../test-agent)/../netrounds-ncc:interfaces/netrounds-ncc:interface/netrounds-ncc:name";
+                }
+              }
+              leaf ip-version {
+                type inet:ip-version;
+                default ipv4;
+              }
+            }
+          }
+
+          container twamp-reflectors {
+            list twamp-reflector {
+              key name;
+              leaf name {
+                type leafref {
+                  path "deref(../../../../../account)/../netrounds-ncc:twamp-reflectors/netrounds-ncc:twamp-reflector/netrounds-ncc:name";
+                }
+              }
+            }
+          }
+
+          container y1731-meps {
+            list y1731-mep {
+              key name;
+              leaf name {
+                type leafref {
+                  path "deref(../../../../../account)/../netrounds-ncc:y1731-meps/netrounds-ncc:y1731-mep/netrounds-ncc:name";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  grouping monitor-parameters {
+    container parameters {
+      list parameter {
+        key key;
+
+        leaf key {
+          type string;
+        }
+
+        choice value-type {
+          mandatory true;
+
+          leaf integer {
+            type int64;
+          }
+          leaf float {
+            type decimal64 {
+              fraction-digits 4;
+            }
+          }
+          leaf string {
+            type string;
+          }
+
+          container test-agent-interfaces {
+            list test-agent-interface {
+              key "account test-agent interface";
+              leaf account {
+                type leafref {
+                  path "../../../../../../../netrounds-ncc:name";
+                }
+              }
+              leaf test-agent {
+                type leafref {
+                  path "../../../../../../../netrounds-ncc:test-agents/netrounds-ncc:test-agent/netrounds-ncc:name";
+                }
+              }
+              leaf interface {
+                type leafref {
+                  path "deref(../test-agent)/../netrounds-ncc:interfaces/netrounds-ncc:interface/netrounds-ncc:name";
+                }
+              }
+              leaf ip-version {
+                type inet:ip-version;
+                default ipv4;
+              }
+            }
+          }
+
+          container twamp-reflectors {
+            list twamp-reflector {
+              key name;
+              leaf name {
+                type leafref {
+                  path "../../../../../../../netrounds-ncc:twamp-reflectors/netrounds-ncc:twamp-reflector/netrounds-ncc:name";
+                }
+              }
+            }
+          }
+
+          container y1731-meps {
+            list y1731-mep {
+              key name;
+              leaf name {
+                type leafref {
+                  path "../../../../../../../netrounds-ncc:y1731-meps/netrounds-ncc:y1731-mep/netrounds-ncc:name";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+/***************************
+  Accounts
+***************************/
+
+  container accounts {
+    list account {
+      key name;
+      leaf name { type string; }
+
+      container test-agents {
+        list test-agent {
+          key name;
+          leaf name {
+            type string;
+          }
+
+          leaf status {
+            config false;
+
+            type test-agent-status-t;
+            default configured;
+          }
+
+          uses test-agent-info;
+          uses test-agent-ntp-config;
+          uses test-agent-interfaces;
+        }
+      }
+
+      container registered-test-agents {
+        config false;
+
+        list test-agent {
+          key name;
+          leaf name {
+            type string;
+          }
+
+          leaf status {
+            type test-agent-status-t;
+          }
+
+          uses test-agent-info;
+          uses test-agent-ntp-config;
+          uses test-agent-interfaces;
+        } // list registered-test-agent
+      } // container test-agents
+
+/***************************
+ Monitorings
+***************************/
+
+      container monitors {
+        list monitor {
+          key name;
+
+          leaf name {
+            type string;
+          }
+          leaf description {
+            type string;
+            default "";
+          }
+
+          leaf template {
+            type string;
+            mandatory true;
+          }
+
+          uses monitor-parameters;
+          uses monitor-status;
+        }
+
+        container templates {
+          config false;
+
+          list template {
+            key name;
+            leaf name { type string; }
+            leaf description { type string; }
+            container parameters {
+              list parameter {
+                key key;
+                leaf key { type string; }
+                leaf type { type parameter-type-t; }
+              }
+            }
+          }
+        }
+      } /* container monitorings */
+
+/***************************
+  Tests
+***************************/
+
+      container tests {
+        config false;
+
+        list test {
+          key id;
+          leaf id {
+            type uint32;
+          }
+          leaf name {
+            type string;
+          }
+          leaf status {
+            type test-status-t;
+          }
+          leaf status-message {
+            type string;
+          }
+          leaf start-time {
+            type yang:date-and-time;
+          }
+          leaf end-time {
+            type yang:date-and-time;
+          }
+
+          leaf report-url { type string; }
+
+          container steps {
+            list step {
+              key id;
+              leaf name { type string; }
+              leaf id { type uint32; }
+              leaf start-time { type yang:date-and-time; }
+              leaf end-time { type yang:date-and-time; }
+              leaf status { type test-status-t; }
+            }
+          }
+        }
+
+        container templates {
+          list template {
+            key name;
+            leaf name { type string; }
+            leaf description { type string; }
+            container parameters {
+              list parameter {
+                key key;
+                leaf key { type string; }
+                leaf type { type parameter-type-t; }
+              }
+            }
+          }
+        }
+      } /* container tests */
+
+
+/***************************
+  Reflectors
+***************************/
+
+      container twamp-reflectors {
+        list twamp-reflector {
+          key name;
+          leaf name {
+            type string;
+          }
+          leaf address {
+            type string;
+            mandatory true;
+          }
+          leaf port {
+            type uint16;
+            mandatory true;
+          }
+          leaf control-port { type uint16; }
+        }
+      }
+
+      container y1731-meps {
+        list y1731-mep {
+          key name;
+          leaf name { type string; }
+          leaf mac {
+            type yang:mac-address;
+            mandatory true;
+          }
+          leaf meg-level {
+            type uint8 {
+              range "0..7";
+            }
+            mandatory true;
+          }
+        }
+      }
+    } /* list account */
+  } /* container accounts */
+
+
+/***************************
+  RPCs
+***************************/
+
+  rpc start-test {
+    input {
+      leaf name {
+        type string;
+        mandatory true;
+      }
+      leaf account {
+        type leafref {
+          path "/netrounds-ncc:accounts/netrounds-ncc:account/netrounds-ncc:name";
+        }
+        mandatory true;
+      }
+      leaf template {
+        type string;
+        mandatory true;
+      }
+      uses test-parameters;
+    }
+    output {
+      leaf result {
+        type test-status-t;
+        mandatory true;
+      }
+      leaf id {
+        type uint32;
+      }
+      leaf error-text {
+        type string;
+      }
+    }
+  }
+
+  rpc update-cdb-from-ncc {
+
+    output {
+      leaf success {
+        type boolean;
+        mandatory true;
+      }
+      leaf error-text {
+        type string;
+      }
+    }
+  }
+
+/***************************
+  Notifications
+***************************/
+
+  notification test-agent-status-change {
+    leaf account {
+      mandatory true;
+      type leafref {
+        path "/netrounds-ncc:accounts/netrounds-ncc:account/netrounds-ncc:name";
+      }
+    }
+
+    leaf test-agent {
+      mandatory true;
+      type leafref {
+        path "/netrounds-ncc:accounts/netrounds-ncc:account/netrounds-ncc:test-agents/netrounds-ncc:test-agent/netrounds-ncc:name";
+      }
+    }
+
+    leaf status {
+      mandatory true;
+      type enumeration {
+        enum registered;
+        enum deregistered;
+        enum offline;
+        enum online;
+      }
+    }
+  }
+
+  notification test-status-change {
+    leaf account {
+      mandatory true;
+      type leafref {
+        path "/netrounds-ncc:accounts/netrounds-ncc:account/netrounds-ncc:name";
+      }
+    }
+
+    leaf id {
+      mandatory true;
+      type leafref {
+        path "/netrounds-ncc:accounts/netrounds-ncc:account/netrounds-ncc:tests/netrounds-ncc:test/netrounds-ncc:id";
+      }
+    }
+
+    leaf status {
+      mandatory true;
+      type test-status-t;
+    }
+    leaf finished {
+      type boolean;
+      description "True if test status is error, passed, failed or canceled";
+    }
+  }
+
+  notification monitor-sla-status-change {
+    leaf account {
+      mandatory true;
+      type leafref {
+        path "/netrounds-ncc:accounts/netrounds-ncc:account/netrounds-ncc:name";
+      }
+    }
+    leaf monitor {
+      mandatory true;
+      type leafref {
+        path "/netrounds-ncc:accounts/netrounds-ncc:account/netrounds-ncc:monitors/netrounds-ncc:monitor/netrounds-ncc:name";
+      }
+    }
+    leaf status {
+      mandatory true;
+      type monitor-sla-status-t;
+    }
+    leaf prev-status {
+      mandatory true;
+      type monitor-sla-status-t;
+    }
+    leaf url {
+      mandatory true;
+      type string;
+    }
+  }
+}

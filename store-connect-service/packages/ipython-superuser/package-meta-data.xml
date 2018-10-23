@@ -1,0 +1,13 @@
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+  <name>ipython-superuser</name>
+  <package-version>1.0</package-version>
+  <description>IPython-superuser grants any NSO CLI Operator superuser
+  access to an ipython environment which can see and modify anything
+  in the Operator's transaction.  WARNING: By installing this package,
+  any operator can become 'superuser' and read and write any part of
+  the configuration, including decryption of encrypted data such as
+  passwords, read any non-configuration data, invoke any action. The
+  operator may also gain full access to the underlaying operating
+  system with the same privileges as NSO.</description>
+  <ncs-min-version>4.2</ncs-min-version>
+</ncs-package>

@@ -1,0 +1,150 @@
+module storeconnect {
+  yang-version 1.1;
+  namespace "http://example.com/storeconnect";
+  prefix storeconnect;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+  import junos-conf-root {
+    prefix jc;
+  }
+  import junos-conf-interfaces {
+    prefix jc-interfaces;
+  }
+  import Cisco-IOS-XE-native {
+    prefix ios;
+  }
+  import ietf-interfaces {
+    prefix if;
+  }
+
+  description
+    "Bla bla...";
+
+  revision 2018-02-01 {
+    description
+      "Initial revision.";
+  }
+
+  container stores {    
+    list store {
+      key name;
+      leaf name {
+        type string;
+      }
+      container network {
+        leaf address {
+          type inet:ipv4-address;
+        }
+        leaf i-router {
+          type leafref {
+            path "/ncs:devices/ncs:device/ncs:name";
+          }
+        }
+        leaf interface {
+          type string;
+        }
+      }
+      leaf-list tags {
+        type string;
+      }
+    }
+  }
+
+  container publishers {
+    list publisher {
+      description "Storeconnect service for BookZone publishers";
+
+      key name;
+      leaf name {
+        tailf:info "Name of publisher connecting";
+        tailf:cli-allow-range;
+        type string;
+      }
+
+      uses ncs:service-data;
+      ncs:servicepoint storeconnect-servicepoint;
+
+      container network {
+        list site {
+          key name;
+          leaf name {
+            type string;
+          }
+          leaf address {
+            type inet:ipv4-address;
+          }
+          leaf mask-len {
+            type uint32 {
+              range "0..32";
+            }
+            default 32;
+          }
+          leaf e-router {
+            must "starts-with(current(), 'ej') or "+
+                 "starts-with(current(), 'ec') or "+
+                 "starts-with(current(), 'ei')";
+            type leafref {
+              path "/ncs:devices/ncs:device/ncs:name";
+            }
+          }
+          choice interface-type {
+            leaf junos-interface {
+              when "starts-with(../e-router, 'ej')";
+              type leafref {
+                path "deref(../e-router)/../ncs:config/jc:configuration/"+
+                "jc-interfaces:interfaces/jc-interfaces:interface/jc-interfaces:name";
+                require-instance false;
+              }
+            }
+            leaf ios-ge-interface {
+              when "starts-with(../e-router, 'ec')";
+              type leafref {
+                path "deref(../e-router)/../ncs:config/"+
+                     "ios:native/ios:interface/ios:GigabitEthernet/ios:name";
+                require-instance false;
+              }
+            }
+            leaf ietf-interface {
+              when "starts-with(../e-router, 'ei')";
+              type leafref {
+                path "deref(../e-router)/../ncs:config/"+
+                     "if:interfaces/if:interface/if:name";
+                require-instance false;
+              }
+            }
+          }
+        }
+        leaf allocated-vlan {
+          config false;
+          type uint32 {
+            range "1..4094";
+          }
+        }
+      }
+      container target-store {     
+        list tags {
+          key tag;
+
+          leaf tag {
+            type leafref {
+              path "/stores/store/tags";
+              require-instance false;
+            }
+          }
+          leaf number-of-stores-with-tag {
+            config false;
+            type uint32;
+          }
+        }
+      }
+    }
+  }
+}

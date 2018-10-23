@@ -1,0 +1,38 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+  <device>
+    <name>ic0</name>
+      <config>
+        <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+          <hostname>ic0</hostname>
+        </native>
+        <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+          <interface>
+            <name>GigabitEthernet0/0/0</name>
+            <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:gigabitEthernet</type>
+          </interface>
+          <interface>
+            <name>GigabitEthernet0/0/1</name>
+            <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:gigabitEthernet</type>
+          </interface>
+          <interface>
+            <name>GigabitEthernet0/0/2</name>
+            <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:gigabitEthernet</type>
+          </interface>
+          <interface>
+            <name>GigabitEthernet0/1/0</name>
+            <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:gigabitEthernet</type>
+          </interface>
+          <interface>
+            <name>GigabitEthernet0/1/1</name>
+            <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:gigabitEthernet</type>
+          </interface>
+          <interface>
+            <name>GigabitEthernet0/1/2</name>
+            <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:gigabitEthernet</type>
+          </interface>
+        </interfaces>
+      </config>
+  </device>
+  </devices>
+</config>

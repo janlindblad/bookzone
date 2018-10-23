@@ -1,0 +1,34 @@
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="c">
+  <operationalMode>
+    <cmd name="ipython">
+      <info>Run IPython</info>
+      <help>Run IPython</help>
+      <callback>
+        <exec>
+          <osCommand>ipython</osCommand>
+          <args>-i packages/ipython-superuser/python/ipython-superuser.py</args>
+          <options>
+            <uid>user</uid>
+            <gid>user</gid>
+          </options>
+        </exec>
+      </callback>
+    </cmd>
+  </operationalMode>
+  <configureMode>
+    <cmd name="ipython">
+      <info>Run IPython</info>
+      <help>Run IPython</help>
+      <callback>
+        <exec>
+          <osCommand>ipython</osCommand>
+          <args>-i packages/ipython-superuser/python/ipython-superuser.py</args>
+          <options>
+            <uid>user</uid>
+            <gid>user</gid>
+          </options>
+        </exec>
+      </callback>
+    </cmd>
+  </configureMode>
+</clispec>

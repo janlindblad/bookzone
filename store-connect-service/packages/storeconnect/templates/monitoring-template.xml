@@ -1,0 +1,38 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs" tags="nocreate">
+    <device>
+      <name>{$DEVICE}</name>
+      <config>
+        <accounts xmlns="http://com/netrounds/ncc" tags="merge">
+          <account>
+            <name>bookzone</name>
+            <monitors>
+              <monitor>
+                <name>{/name}</name>
+                <description>connectivity with standard qos</description>
+                <template>connectivity-std-qos</template>
+                <parameters>
+                  <parameter>
+                    <key>bandwidth</key>
+                    <integer>2</integer>
+                  </parameter>
+                  <parameter>
+                    <key>vlan-id</key>
+                    <integer>{$VLAN_ID}</integer>
+                  </parameter>
+                </parameters>
+              </monitor>
+            </monitors>
+            <twamp-reflectors>
+              <twamp-reflector>
+                <name>{$MON_NAME}</name>
+                <address>{$ADDRESS}</address>
+                <port>6789</port>
+              </twamp-reflector>
+            </twamp-reflectors>
+          </account>
+        </accounts>
+      </config>
+    </device>
+  </devices>
+</config-template>
