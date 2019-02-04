@@ -99,24 +99,35 @@ module storeconnect {
             leaf junos-interface {
               when "starts-with(../e-router, 'ej')";
               type leafref {
-                path "deref(../e-router)/../ncs:config/jc:configuration/"+
-                "jc-interfaces:interfaces/jc-interfaces:interface/jc-interfaces:name";
+                path "/ncs:devices/ncs:device[ncs:name=current()/../e-router]/"+
+                     "ncs:config/jc:configuration/jc-interfaces:interfaces/"+
+                     "jc-interfaces:interface/jc-interfaces:name";
+                // The path above expressed using deref():
+                // path "deref(../e-router)/../ncs:config/jc:configuration/"+
+                //      "jc-interfaces:interfaces/jc-interfaces:interface/jc-interfaces:name";
                 require-instance false;
               }
             }
             leaf ios-ge-interface {
               when "starts-with(../e-router, 'ec')";
               type leafref {
-                path "deref(../e-router)/../ncs:config/"+
-                     "ios:native/ios:interface/ios:GigabitEthernet/ios:name";
+                path "/ncs:devices/ncs:device[ncs:name=current()/../e-router]/"+
+                     "ncs:config/ios:native/ios:interface/ios:GigabitEthernet/"+
+                     "ios:name";
+                // The path above expressed using deref():
+                // path "deref(../e-router)/../ncs:config/"+
+                //      "ios:native/ios:interface/ios:GigabitEthernet/ios:name";
                 require-instance false;
               }
             }
             leaf ietf-interface {
               when "starts-with(../e-router, 'ei')";
               type leafref {
-                path "deref(../e-router)/../ncs:config/"+
-                     "if:interfaces/if:interface/if:name";
+                path "/ncs:devices/ncs:device[ncs:name=current()/../e-router]/"+
+                     "ncs:config/if:interfaces/if:interface/if:name";
+                // The path above expressed using deref():
+                // path "deref(../e-router)/../ncs:config/"+
+                //      "if:interfaces/if:interface/if:name";
                 require-instance false;
               }
             }

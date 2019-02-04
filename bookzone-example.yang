@@ -147,7 +147,9 @@ module bookzone-example {
     }
     leaf format {
       type leafref {
-        path deref(../title)/../format/format-id;
+        path /books/book[title=current()/../title]/format/format-id;
+        // The path above expressed using deref():
+        // path deref(../title)/../format/format-id;
       }
     }
   }
@@ -278,7 +280,9 @@ module bookzone-example {
             }
             leaf id {
               type leafref {
-                path deref(../method)/../id;
+                path ../../../payment-methods/payment-method[method=current()/../method]/id;
+                // The path above expressed using deref():
+                // path deref(../method)/../id;
               }
             }
           }
