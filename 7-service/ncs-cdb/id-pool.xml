@@ -1,0 +1,11 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <resource-pools xmlns="http://cisco.com/yang/nso/resource-allocator">
+  <id-pool>
+    <name>my-vlan-pool</name>
+    <range xmlns="http://cisco.com/yang/nso/id-allocator">
+      <start>10</start>
+      <end>100</end>
+    </range>
+  </id-pool>
+  </resource-pools>
+</config>

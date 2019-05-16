@@ -1,0 +1,160 @@
+[doc Testing 1-intro lab section]
+[config require=MAKE]
+[global fail_pattern=[Ee][Rr][Rr][Oo][Rr]]
+
+[macro file-check]
+    !ls -1
+    ???LICENSE
+    ???Makefile
+    ???README.md
+    ???bookzone-example.yang
+    ???confd.conf
+    ???SH-PROMPT
+[endmacro]
+
+[macro confdc-version]
+    !confdc --version
+    ???confd-
+    ???SH-PROMPT
+[endmacro]
+
+[macro make-usage]
+    !$MAKE
+    ???See README.md for more instructions
+    ???SH-PROMPT
+[endmacro]
+
+[macro make-all]
+    !$MAKE all
+    ???confdc
+    ???Build complete
+    ???SH-PROMPT
+[endmacro]
+
+[macro make-start]
+    !$MAKE start
+    ???confd -c confd.conf
+    ???SH-PROMPT
+    !echo ==$$?==
+    ???==0==
+    ???SH-PROMPT
+[endmacro]
+
+[macro make-stop]
+    !$MAKE stop
+    ???Shutting down the confd daemon
+    ???SH-PROMPT
+[endmacro]
+
+[macro make-clean]
+    !$MAKE clean
+    ???SH-PROMPT
+    !ls -l *.fxs confd-cdb ssh-keydir *.foo|wc
+    ??? 0 
+    ???SH-PROMPT
+[endmacro]
+
+[macro make-cli]
+    !$MAKE cli-c
+    ???confd_cli -C
+    ???admin connected
+    ???# 
+[endmacro]
+
+[macro show-run]
+    !show running-config|nomore
+    """???
+    aaa authentication users user admin
+     uid        9000
+     gid        20
+    """
+    ?# 
+[endmacro]
+
+[macro cli-exit]
+    !exit
+    ???SH-PROMPT
+[endmacro]
+
+[macro to-config-mode]
+    !config
+    ???Entering configuration mode terminal
+    ???(config)# 
+[endmacro]
+
+[macro exit-config-mode]
+    !exit
+    -(config)# 
+    ???# 
+    -
+[endmacro]
+
+[macro add-neverending-story]
+    ~$_TAB_
+    ???Possible completions
+    ???aaa
+    ???AAA management
+    ???books
+    ???--More--
+    ! 
+    ???(config)# 
+    ~books book $_TAB_
+    ???Possible completions:
+    ???<title:string>
+    ???(config)# 
+    !"The Neverending Story"
+    ???Value for 'isbn' (<string>):
+    !9780140386332
+    ???(config-book-The Neverending Story)# 
+    ~$_TAB_
+    ???Possible completions:
+    ???  author
+    ???  isbn
+    ???  price
+    ???  ---
+    ???(config-book-The Neverending Story)# 
+    !author "Michael Ende"
+    ???(config-book-The Neverending Story)# 
+    !price 8.50
+    ???(config-book-The Neverending Story)# 
+    !top
+    ???(config)# 
+[endmacro]
+
+[macro show-c]
+    !show c
+    ???books book "The Neverending Story"
+    ???isbn   9780140386332
+    ???author "Michael Ende"
+    ???price  8.5
+    ???!
+    ???(config)# 
+[endmacro]
+
+[macro commit]
+    !commit
+    ???Commit complete.
+[endmacro]
+
+[shell confd]
+    !cd ../../1-intro
+    ???SH-PROMPT
+    [invoke file-check]
+    [invoke confdc-version]
+    [invoke make-usage]
+
+    [invoke make-clean]
+    [invoke make-all]
+    [invoke make-start]
+
+    [invoke make-cli]
+    [invoke show-run]
+    [invoke to-config-mode]
+    [invoke add-neverending-story]
+    [invoke show-c]
+    [invoke commit]
+    [invoke exit-config-mode]
+    [invoke cli-exit]
+
+    [invoke make-stop]
+    [invoke make-clean]

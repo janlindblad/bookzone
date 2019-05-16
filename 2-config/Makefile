@@ -1,19 +1,19 @@
 ######################################################################
-# (C) 2018 Jan Lindblad
+# (C) 2019 Jan Lindblad
 #
-# See the LICENSE file for license information
-# See the README  file for more information
+# See the LICENSE   file for license information
+# See the README.md file for more information
 ######################################################################
 
 usage:
-	@echo "See README files for more instructions"
-	@echo "make all        Build all example files"
-	@echo "make clean      Remove all built and intermediary files"
-	@echo "make start      Start ConfD daemon and example agent"
-	@echo "make stop       Stop any ConfD daemon and example agent"
-	@echo "make reset      Start over (make stop clean all start)"
-	@echo "make cli-c      Start the ConfD Command Line Interface, C-style"
-	@echo "make cli-j      Start the ConfD Command Line Interface, J-style"
+	@echo "See README.md for more instructions"
+	@echo "make all        # Build all example files"
+	@echo "make clean      # Remove all built and intermediary files"
+	@echo "make start      # Start ConfD daemon and example agent"
+	@echo "make stop       # Stop any ConfD daemon and example agent"
+	@echo "make reset      # Start over (make stop clean all start)"
+	@echo "make cli-c      # Start the ConfD Command Line Interface, C-style"
+	@echo "make cli-j      # Start the ConfD Command Line Interface, J-style"
 
 ######################################################################
 # Where is ConfD installed? Make sure CONFD_DIR points it out
@@ -22,7 +22,7 @@ usage:
 include $(CONFD_DIR)/src/confd/build/include.mk
 
 /src/confd/build/include.mk:
-	$(error CONFD_DIR not set. See README for details.)
+	$(error CONFD_DIR not set. See README.md for details.)
 
 ######################################################################
 
@@ -31,7 +31,11 @@ PYTHON ?= python
 START_FLAGS ?=
 
 all:	bookzone-example.fxs \
-		$(CDB_DIR) copy-factory-defaults ssh-keydir
+		$(CDB_DIR) \
+		$(CDB_DIR)/authors_init.xml \
+		$(CDB_DIR)/books_init.xml \
+		$(CDB_DIR)/users_init.xml \
+		ssh-keydir
 	@echo "Build complete"
 
 reset: stop clean all start
@@ -43,16 +47,16 @@ bookzone-example.fxs: bookzone-example.yang
 						-o $@ \
 						bookzone-example.yang
 
-copy-factory-defaults:
-	# ConfD will load any XML files in the database directory as 
-	# factory default data when it starts clean (no database files)
-	cp factory-defaults/*_init.xml $(CDB_DIR)
+# ConfD will load any XML files in the database directory as 
+# factory default data when it starts clean (no database files)
+$(CDB_DIR)/%.xml: ../common/factory-defaults/%.xml
+	cp $< $@
 
 ######################################################################
 clean:	genclean pyclean traceclean dbclean 
 
 genclean: iclean
-	-rm confderr* 2> /dev/null || true
+	-rm confderr.* 2> /dev/null || true
 
 pyclean:
 	-rm *_ns.py __init__.py *.pyc 2> /dev/null || true

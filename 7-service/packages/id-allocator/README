@@ -1,0 +1,62 @@
+This is an implementation of an id allocator adhering to the interface
+defined by the resource-manager package. Above the interface in
+resource-manager it supports a sync feature. It allows multiple
+allocations in different pools to be synchronized such that they
+get the same id in all pools, for example
+
+    suppose we have three id pools
+
+            id-pool lan1 {
+                range {
+                    start 20;
+                    end   200;
+                }
+            }
+            id-pool lan2 {
+                range {
+                    start 30;
+                    end   200;
+                }
+            }
+            id-pool lan3 {
+                range {
+                    start 40;
+                    end   200;
+                }
+            }
+
+    and we create a sync allocation in pool lan3, ie
+
+    % set resource-pools id-pool lan3 allocation a request sync true
+    % commit
+    % run show status resource-pools id-pool lan3
+    allocation a {
+        response {
+            id 40;
+        }
+    }
+
+    Now, if we create another allocation in pool lan1 with the same
+    allocation id a and the sync leaf set to 'true', the allocator
+    will try to allocate the same id as it allocated in the lan3 pool
+    for the same allocation id, ie
+
+    % set resource-pools id-pool lan2 allocation a request sync true
+    % commit
+    % run show status resource-pools id-pool lan2
+    allocation a {
+        response {
+            id 40;
+        }
+    }
+
+    If it cannot allocate the same id it will not allocate any id
+    at all and instead report an error
+
+    Similarly, if multiple allocations are done in the same
+    transaction using the same allocation id in different pools,
+    and the sync leaf set to 'true', then the allocator will
+    try to find an allocation id that is available in all pools.
+    If it fails it will report an error and not allocate anything.
+
+

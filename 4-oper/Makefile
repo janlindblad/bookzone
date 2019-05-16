@@ -30,18 +30,31 @@ CONFD_FLAGS = --addloadpath $(CONFD_DIR)/etc/confd
 PYTHON ?= python
 START_FLAGS ?=
 
-all:	bookzone-example.fxs \
-		$(CDB_DIR) ssh-keydir
+all:	bookzone-example.fxs bookzone_example_ns.py \
+		$(CDB_DIR) \
+		$(CDB_DIR)/authors_init.xml \
+		$(CDB_DIR)/books_init.xml \
+		$(CDB_DIR)/users_init.xml \
+		ssh-keydir
 	@echo "Build complete"
 
 reset: stop clean all start
 
 # Keeping make rules very simple and explicit so you can see what's going on
 
-bookzone-example.fxs: bookzone-example.yang
+bookzone-example.fxs: bookzone-example.yang bookzone-example-ann.yang
 	$(CONFDC) --fail-on-warnings -c \
 						-o $@ \
+						-a bookzone-example-ann.yang \
 						bookzone-example.yang
+
+bookzone_example_ns.py: bookzone-example.fxs
+	$(CONFDC) --emit-python $@ $<
+
+# ConfD will load any XML files in the database directory as 
+# factory default data when it starts clean (no database files)
+$(CDB_DIR)/%.xml: ../common/factory-defaults/%.xml
+	cp $< $@
 
 ######################################################################
 clean:	genclean pyclean traceclean dbclean 
@@ -59,10 +72,21 @@ dbclean:
 	-rm -f $(CDB_DIR)/*.cdb
 
 ######################################################################
-start:  stop start_confd
+start:  stop start_confd start_apps start_done
 
 start_confd:
 	$(CONFD) -c confd.conf $(CONFD_FLAGS)
+	# Load some operational sample data
+	# Must be done after ConfD has started
+	confd_load -lCO operational-data.xml
+
+start_apps:
+	PYTHONPATH=".:$$PYTHONPATH" $(PYTHON) ./purchase_action.py $(START_FLAGS) &
+
+start_done:
+	# Give the purchase action a moment to start in the background
+	@sleep 1
+	@echo ""
 
 ######################################################################
 stop:
@@ -77,5 +101,12 @@ cli-j:
 cli-c:
 	$(CONFD_DIR)/bin/confd_cli -C --user=admin --groups=admin \
 		--interactive  || echo Exit
+
+send-notif:
+	# You are triggering the event notification manually now. 
+	# In the real world, this would be sent automatically when
+	# some application detects the right conditions (i.e. books
+	# are in stock again)
+	$(PYTHON) ./send_notif.py
 
 ######################################################################

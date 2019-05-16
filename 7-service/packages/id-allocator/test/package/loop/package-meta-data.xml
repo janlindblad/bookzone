@@ -1,0 +1,21 @@
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+  <name>loop</name>
+  <package-version>1.0</package-version>
+  <description>
+    Create a loop interface on all routers. Demo the reactive
+    fastmap design pattern.
+  </description>
+  <ncs-min-version>3.0</ncs-min-version>
+  <required-package>
+    <name>cisco-ios</name>
+  </required-package>
+  <required-package>
+    <name>resource-manager</name>
+  </required-package>
+  <component>
+    <name>loop</name>
+    <callback>
+      <java-class-name>com.example.loop.LoopServiceRFS</java-class-name>
+    </callback>
+  </component>
+</ncs-package>

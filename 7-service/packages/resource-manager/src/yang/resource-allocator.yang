@@ -1,0 +1,132 @@
+module resource-allocator {
+  namespace "http://cisco.com/yang/nso/resource-allocator";
+  prefix "ralloc";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  /*
+   * This is an API for resource allocator.
+   *
+   * An allocation request is signaled by creating an entry in the
+   * allocation list.
+   *
+   * The response is signaled by writing a value in the response
+   * leave(s). The responder is responsible for re-deploying the
+   * allocatino owner after writing the result in the response
+   * leaf.
+   *
+   * We expect a specific allocator package to do the following:
+   *
+   *   1. subscribe to changes to the allocation list and look for
+   *      create operations
+   *   2. perform the allocation and respond by writing the result
+   *      into the response leaf, and then invoke the re-deploy
+   *      action of the service pointed to by the owner leaf.
+   *
+   * It may also annotate this model with additional pool definition
+   * data.
+   *
+   */
+
+  grouping resource-pool-grouping {
+    leaf name {
+      tailf:info "Unique name for the pool";
+      type string;
+    }
+
+    leaf owner {
+      tailf:info "Owner of resouce pool";
+      type string;
+    }
+
+    leaf-list tags {
+      tailf:info "Annotations assigned to this resource pool";
+      type string;
+    }
+
+    list allocation {
+      key id;
+
+      leaf id {
+        type string;
+      }
+
+      // leaf owner {
+      //   tailf:info "Instance identifier of service that owns resouce";
+      //   // should be leafref to occupancy but don't have data model
+      //   // yet.
+      //   type string;
+      // }
+
+      leaf allocating-service {
+        tailf:info "Instance identifier of service that owns resouce";
+        type instance-identifier {
+          require-instance false;
+        }
+      }
+
+      container request {
+      }
+
+      container response {
+        config false;
+        tailf:cdb-oper {
+          tailf:persistent true;
+        }
+        choice response-choice {
+          case error {
+            leaf error {
+              type string;
+            }
+          }
+          case ok {
+          }
+        }
+      }
+    }
+  }
+
+  container resource-pools {
+
+    list id-pool {
+      tailf:info "Id pool";
+      key name;
+
+      uses resource-pool-grouping {
+        augment "allocation/response/response-choice/ok" {
+          leaf id {
+            type uint32;
+          }
+        }
+      }
+    }
+
+    list ip-address-pool {
+      tailf:info "IP Address pools";
+      key name;
+
+      uses resource-pool-grouping {
+        augment "allocation/request" {
+          leaf subnet-size {
+            mandatory true;
+            type uint8;
+          }
+        }
+        augment "allocation/response/response-choice/ok" {
+          leaf subnet {
+            type inet:ip-prefix;
+          }
+          leaf from {
+            type inet:ip-prefix;
+          }
+        }
+      }
+    }
+  }
+}

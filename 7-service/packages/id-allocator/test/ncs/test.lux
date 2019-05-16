@@ -1,0 +1,908 @@
+[doc Test of ipaddress allocator]
+
+[config skip=TAILFSKIP_JAVA]
+[config skip=TAILFSKIP_SUNOS]
+[config require=MAKE]
+[global fail_pattern=[Ee][Rr][Rr][Oo][Rr]]
+
+[shell ncs]
+    [timeout 120]
+    !$MAKE clean_cdb
+    ?SH-PROMPT
+    !echo ==$$?==
+    ?==0==
+    ?SH-PROMPT
+
+    -$fail_pattern
+    !$MAKE start
+    ?ncs_started
+    #!ncs --with-package-reload
+    #?SH-PROMPT
+
+[shell cli]
+    -$fail_pattern
+    !$MAKE cli
+    ?admin connected
+    ?.*>
+    !set paginate false
+    ?.*>
+    !request devices sync-from
+    ?.*>
+    !config
+    ?.*%
+    !set resource-pools id-pool management range start 10 end 200
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        available 10 200;
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool management range start 5 end 150
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        available 5 150;
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool management exclude 8 30
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        reservations 8 30;
+        available 5 7;
+        available 31 150;
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool management allocation a1
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        reservations 8 30;
+        available 5 7;
+        available 32 150;
+        allocation 31 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+
+    !rollback
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        reservations 8 30;
+        available 5 7;
+        available 31 150;
+    }
+    """
+    ?.*%
+
+    !rollback
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        reservations 8 30;
+        available 5 7;
+        available 32 150;
+        allocation 31 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool management range start 40 end 200
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        reservations 8 30;
+        available 41 200;
+        allocation 40 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+    !run show status resource-pools
+    """??
+    id-pool management {
+        allocation a1 {
+            response {
+                id 40;
+            }
+        }
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool management allocation a2
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        reservations 8 30;
+        available 42 200;
+        allocation 40 {
+            owner "";
+        }
+        allocation 41 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+    !run show status resource-pools
+    """??
+    id-pool management {
+        allocation a1 {
+            response {
+                id 40;
+            }
+        }
+        allocation a2 {
+            response {
+                id 41;
+            }
+        }
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool management exclude 20 88
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        exclude 20 88;
+        reservations 8 30;
+        reservations 20 88;
+        available 91 200;
+        allocation 89 {
+            owner "";
+        }
+        allocation 90 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+    !run show status resource-pools
+    """??
+    id-pool management {
+        allocation a1 {
+            response {
+                id 89;
+            }
+        }
+        allocation a2 {
+            response {
+                id 90;
+            }
+        }
+    }
+    """
+    ?.*%
+
+    !request devices sync-from
+    ?.*%
+    !set services loop l pool management device c0 unit 4 description hej
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        exclude 20 88;
+        reservations 8 30;
+        reservations 20 88;
+        available 92 200;
+        allocation 89 {
+            owner "";
+        }
+        allocation 90 {
+            owner "";
+        }
+        allocation 91 {
+            owner "/ncs:services/vl:loop{l}";
+        }
+    }
+    """
+    ?.*%
+    [sleep 2]
+
+    !exit
+    ?.*>
+    !exit
+    ?SH-PROMPT
+
+[shell ncs]
+    !$MAKE stop
+    ?SH-PROMPT
+    !$MAKE start
+    ?ncs_started
+
+
+[shell cli]
+    -$fail_pattern
+    !$MAKE cli
+    ?admin connected
+    ?.*>
+    !set paginate false
+    ?.*>
+    !config
+    ?.*%
+
+    !run show status resource-pools
+    """??
+    id-pool management {
+        allocation a1 {
+            response {
+                id 89;
+            }
+        }
+        allocation a2 {
+            response {
+                id 90;
+            }
+        }
+        allocation l {
+            response {
+                id 91;
+            }
+        }
+    }
+    """
+    ?.*%
+
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        exclude 20 88;
+        reservations 8 30;
+        reservations 20 88;
+        available 92 200;
+        allocation 89 {
+            owner "";
+        }
+        allocation 90 {
+            owner "";
+        }
+        allocation 91 {
+            owner "/ncs:services/vl:loop{l}";
+        }
+    }
+    """
+    ?.*%
+
+    !rollback
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        exclude 20 88;
+        reservations 8 30;
+        reservations 20 88;
+        available 91 200;
+        allocation 89 {
+            owner "";
+        }
+        allocation 90 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+
+    !run show status resource-pools
+    """??
+    id-pool management {
+        allocation a1 {
+            response {
+                id 89;
+            }
+        }
+        allocation a2 {
+            response {
+                id 90;
+            }
+        }
+    }
+    """
+    ?.*%
+
+    !delete resource-pools id-pool management allocation
+    ?.*%
+    !commit
+    !run show status resource-pools
+    """??
+    id-pool management;
+    """
+    ?.*%
+
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        exclude 20 88;
+        reservations 8 30;
+        reservations 20 88;
+        available 89 200;
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool management range start 5 end 150
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 8 30;
+        exclude 20 88;
+        reservations 8 30;
+        reservations 20 88;
+        available 5 7;
+        available 89 150;
+    }
+    """
+    ?.*%
+
+    !delete resource-pools id-pool management exclude 8 30
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        exclude 20 88;
+        reservations 20 88;
+        available 5 19;
+        available 89 150;
+    }
+    """
+    ?.*%
+
+    !delete resource-pools id-pool management exclude 20 88
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool management {
+        available 5 150;
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool lan1 range start 20 end 200
+    ?.*%
+    !set resource-pools id-pool lan2 range start 30 end 200
+    ?.*%
+    !set resource-pools id-pool lan3 range start 40 end 200
+    ?.*%
+    !commit
+    ?.*%
+
+    !set resource-pools id-pool management allocation a request sync true
+    ?.*%
+    !commit
+    ?.*%
+
+    !run show status id-allocator
+    """??
+    pool lan1 {
+        available 20 200;
+    }
+    pool lan2 {
+        available 30 200;
+    }
+    pool lan3 {
+        available 40 200;
+    }
+    pool management {
+        available 6 150;
+        allocation 5 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+    !set resource-pools id-pool lan1 allocation a request sync true
+    ?.*%
+    !commit
+    ?.*%
+
+    !run show status id-allocator
+    """??
+    pool lan1 {
+        available 20 200;
+    }
+    pool lan2 {
+        available 30 200;
+    }
+    pool lan3 {
+        available 40 200;
+    }
+    pool management {
+        available 6 150;
+        allocation 5 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+    -
+    !run show status resource-pools
+    """??
+    id-pool lan1 {
+        allocation a {
+            response {
+                error "com.cisco.nso.idpool.exceptions.PoolExhaustedException: Requested id not available";
+            }
+        }
+    }
+    id-pool lan2;
+    id-pool lan3;
+    id-pool management {
+        allocation a {
+            response {
+                id 5;
+            }
+        }
+    }
+    """
+    ?.*%
+    -$fail_pattern
+
+    !delete resource-pools id-pool lan1 allocation a
+    ?.*%
+    !commit
+    ?.*%
+
+    !set resource-pools id-pool management allocation b
+    ?.*%
+    !set resource-pools id-pool lan1 allocation b request sync true
+    ?.*%
+    !set resource-pools id-pool lan2 allocation b request sync true
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool lan1 {
+        available 20 29;
+        available 31 200;
+        allocation 30 {
+            owner "";
+        }
+    }
+    pool lan2 {
+        available 31 200;
+        allocation 30 {
+            owner "";
+        }
+    }
+    pool lan3 {
+        available 40 200;
+    }
+    pool management {
+        available 7 150;
+        allocation 5 {
+            owner "";
+        }
+        allocation 6 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+    !run show status resource-pools
+    """??
+    id-pool lan1 {
+        allocation b {
+            response {
+                id 30;
+            }
+        }
+    }
+    id-pool lan2 {
+        allocation b {
+            response {
+                id 30;
+            }
+        }
+    }
+    id-pool lan3;
+    id-pool management {
+        allocation a {
+            response {
+                id 5;
+            }
+        }
+        allocation b {
+            response {
+                id 6;
+            }
+        }
+    }
+    """
+    ?.*%
+
+    !rollback
+    ?.*%
+    !commit
+    ?.*%
+    !set resource-pools id-pool lan2 allocation b request sync true
+    ?.*%
+    !set resource-pools id-pool lan3 allocation b request sync true
+    ?.*%
+    !commit
+    ?.*%
+    !run show status resource-pools
+    """??
+    id-pool lan1;
+    id-pool lan2 {
+        allocation b {
+            response {
+                id 40;
+            }
+        }
+    }
+    id-pool lan3 {
+        allocation b {
+            response {
+                id 40;
+            }
+        }
+    }
+    id-pool management {
+        allocation a {
+            response {
+                id 5;
+            }
+        }
+    }
+    """
+    ?.*%
+    !set resource-pools id-pool lan1 allocation b request sync true
+    ?.*%
+    !commit
+    ?.*%
+    !run show status resource-pools
+    """??
+    id-pool lan1 {
+        allocation b {
+            response {
+                id 40;
+            }
+        }
+    }
+    id-pool lan2 {
+        allocation b {
+            response {
+                id 40;
+            }
+        }
+    }
+    id-pool lan3 {
+        allocation b {
+            response {
+                id 40;
+            }
+        }
+    }
+    id-pool management {
+        allocation a {
+            response {
+                id 5;
+            }
+        }
+    }
+    """
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool lan1 {
+        available 20 39;
+        available 41 200;
+        allocation 40 {
+            owner "";
+        }
+    }
+    pool lan2 {
+        available 30 39;
+        available 41 200;
+        allocation 40 {
+            owner "";
+        }
+    }
+    pool lan3 {
+        available 41 200;
+        allocation 40 {
+            owner "";
+        }
+    }
+    pool management {
+        available 6 150;
+        allocation 5 {
+            owner "";
+        }
+    }
+    """
+    ?.*%
+
+    !delete resource-pools id-pool lan1 allocation
+    ?.*%
+    !delete resource-pools id-pool lan2 allocation
+    ?.*%
+    !delete resource-pools id-pool lan3 allocation
+    ?.*%
+    !delete resource-pools id-pool management allocation
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool lan1 {
+        available 20 200;
+    }
+    pool lan2 {
+        available 30 200;
+    }
+    pool lan3 {
+        available 40 200;
+    }
+    pool management {
+        available 5 150;
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool lan1 allocation a request id 45
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool lan1 {
+        available 20 44;
+        available 46 200;
+        allocation 45 {
+            owner "";
+        }
+    }
+    pool lan2 {
+        available 30 200;
+    }
+    pool lan3 {
+        available 40 200;
+    }
+    pool management {
+        available 5 150;
+    }
+    """
+    ?.*%
+    !set resource-pools id-pool lan1 allocation a1 request id 77 sync true
+    ?.*%
+    !set resource-pools id-pool lan2 allocation a1 request sync true
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool lan1 {
+        available 20 44;
+        available 46 76;
+        available 78 200;
+        allocation 45 {
+            owner "";
+        }
+        allocation 77 {
+            owner "";
+        }
+    }
+    pool lan2 {
+        available 30 76;
+        available 78 200;
+        allocation 77 {
+            owner "";
+        }
+    }
+    pool lan3 {
+        available 40 200;
+    }
+    pool management {
+        available 5 150;
+    }
+    """
+    ?.*%
+    !set resource-pools id-pool lan3 allocation a1 request sync true
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool lan1 {
+        available 20 44;
+        available 46 76;
+        available 78 200;
+        allocation 45 {
+            owner "";
+        }
+        allocation 77 {
+            owner "";
+        }
+    }
+    pool lan2 {
+        available 30 76;
+        available 78 200;
+        allocation 77 {
+            owner "";
+        }
+    }
+    pool lan3 {
+        available 40 76;
+        available 78 200;
+        allocation 77 {
+            owner "";
+        }
+    }
+    pool management {
+        available 5 150;
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool management range end 200
+    ?.*%
+    !set resource-pools id-pool lan1 range end 300
+    ?.*%
+    !commit
+    ?.*%
+    !run show status id-allocator
+    """??
+    pool lan1 {
+        available 20 44;
+        available 46 76;
+        available 78 300;
+        allocation 45 {
+            owner "";
+        }
+        allocation 77 {
+            owner "";
+        }
+    }
+    pool lan2 {
+        available 30 76;
+        available 78 200;
+        allocation 77 {
+            owner "";
+        }
+    }
+    pool lan3 {
+        available 40 76;
+        available 78 200;
+        allocation 77 {
+            owner "";
+        }
+    }
+    pool management {
+        available 5 200;
+    }
+    """
+    ?.*%
+
+    !set resource-pools id-pool management allocation x
+    ?.*%
+    !set resource-pools id-pool management allocation y
+    ?.*%
+    !commit
+    ?.*%
+    !run show status resource-pools id-pool management
+    """??
+    allocation x {
+        response {
+            id 5;
+        }
+    }
+    allocation y {
+        response {
+            id 6;
+        }
+    }
+    """
+    ?.*%
+    !set resource-pools id-pool management range start 5 end 5
+    ?.*%
+    !commit
+    ?.*%
+    -
+    !run show status resource-pools id-pool management
+    """??
+    allocation x {
+        response {
+            id 5;
+        }
+    }
+    allocation y {
+        response {
+            error "com.cisco.nso.idpool.exceptions.PoolExhaustedException: ID pool exhausted";
+        }
+    }
+    """
+    ?.*%
+    -$fail_pattern
+    !set resource-pools id-pool management range start 10 end 20
+    ?.*%
+    !commit
+    ?.*%
+    !run show status resource-pools id-pool management
+    """??
+    allocation x {
+        response {
+            id 10;
+        }
+    }
+    allocation y {
+        response {
+            id 11;
+        }
+    }
+    """
+    ?.*%
+
+    !exit
+    ?.*>
+    !exit
+    ?SH-PROMPT
+
+[cleanup]
+    !make stop
+    !echo ==$$?==
+    ?==0==
+

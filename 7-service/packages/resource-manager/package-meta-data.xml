@@ -1,0 +1,10 @@
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+  <name>resource-manager-example</name>
+  <package-version>0.0.0.0</package-version>
+  <description>Resource manager package</description>
+  <ncs-min-version>3.0</ncs-min-version>
+
+  <!-- It's possible to add more components to the -->
+  <!-- same package, multiple services, data providers etc -->
+
+</ncs-package>

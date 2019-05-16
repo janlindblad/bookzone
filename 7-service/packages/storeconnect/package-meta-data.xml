@@ -1,0 +1,29 @@
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+  <name>storeconnect</name>
+  <package-version>1.0</package-version>
+  <description>Generated Python package</description>
+  <ncs-min-version>4.7</ncs-min-version>
+
+  <required-package>
+    <name>cisco-iosxe</name>
+  </required-package>
+  <required-package>
+    <name>juniper-junos</name>
+  </required-package>
+  <required-package>
+    <name>netrounds-ncc</name>
+  </required-package>
+  <required-package>
+    <name>resource-manager</name>
+  </required-package>
+  <required-package>
+    <name>id-allocator</name>
+  </required-package>
+  
+  <component>
+    <name>main</name>
+    <application>
+      <python-class-name>storeconnect.main.Main</python-class-name>
+    </application>
+  </component>
+</ncs-package>

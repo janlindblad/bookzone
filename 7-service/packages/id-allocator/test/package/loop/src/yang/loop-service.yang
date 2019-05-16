@@ -1,0 +1,70 @@
+module loop-service {
+
+  namespace "http://example.com/loop-service";
+  prefix vl;
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  import resource-allocator {
+    prefix ralloc;
+  }
+
+  description
+    "This service creates a loop iface/unit on all routers
+     in our network. ";
+
+  revision 2013-01-08 {
+    description
+      "Initial revision.";
+  }
+
+  augment /ncs:services {
+
+    list loop {
+
+      key name;
+      leaf name {
+        tailf:info "Unique service id";
+        tailf:cli-allow-range;
+        type string;
+      }
+
+      uses ncs:service-data;
+      ncs:servicepoint loopspnt;
+
+      leaf device {
+        tailf:info "Device to enable the loopback interface on";
+        type leafref {
+          path "/ncs:devices/ncs:device/ncs:name";
+        }
+        mandatory true;
+      }
+
+      leaf pool {
+        type leafref {
+          path "/ralloc:resource-pools/ralloc:id-pool/ralloc:name";
+        }
+        mandatory true;
+      }
+
+      leaf unit {
+        tailf:info "Loopback interface number.";
+        type string {
+          pattern "([0-9\.])+";
+          tailf:info "<0-2147483647>;;Loopback interface number";
+        }
+        mandatory true;
+      }
+      leaf description {
+        type string;
+        mandatory true;
+      }
+    }
+  }
+}

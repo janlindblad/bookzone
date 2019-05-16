@@ -1,0 +1,140 @@
+module id-allocator {
+  namespace "http://cisco.com/yang/nso/id-allocator";
+  prefix "idalloc";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import resource-allocator {
+    prefix ralloc;
+  }
+
+  grouping range-grouping {
+    leaf start {
+      type uint32;
+    }
+    leaf end {
+      must ". >= ../start" {
+        tailf:dependency "../start";
+        error-message "range end must be greater or equal to range start";
+      }
+      type uint32;
+    }
+  }
+
+  container id-allocator {
+    config false;
+
+    tailf:cdb-oper {
+      tailf:persistent true;
+    }
+
+    list pool {
+      key name;
+
+      leaf name {
+        type string;
+      }
+
+      container range {
+        uses range-grouping {
+          refine "start" {
+            mandatory true;
+          }
+          refine "end" {
+            mandatory true;
+          }
+        }
+
+        description
+          "Copy of configured range.";
+      }
+
+      list exclude {
+        key "start end";
+        tailf:cli-suppress-mode;
+
+        uses range-grouping;
+
+        description
+          "Copy of configured excludes. Needed to know when excludes
+           have been added.";
+      }
+
+      list reservations {
+        key "start end";
+        tailf:cli-suppress-mode;
+
+        uses range-grouping;
+
+        description
+          "Excluded ranges";
+      }
+
+      list available {
+        key "start end";
+        tailf:cli-suppress-mode;
+
+        uses range-grouping;
+
+        description
+          "Free ranges available for allocation.";
+      }
+
+      list allocation {
+        key "id";
+        tailf:cli-suppress-mode;
+
+        leaf id {
+          type uint32;
+        }
+
+        leaf owner {
+          type string;
+        }
+
+        description
+          "Allocated ranges.";
+      }
+    }
+  }
+
+  augment "/ralloc:resource-pools/ralloc:id-pool" {
+    container range {
+      uses range-grouping;
+
+      leaf stop-allocation {
+        type boolean;
+        default "false";
+      }
+    }
+    list exclude {
+      key "start end";
+      tailf:cli-suppress-mode;
+
+      uses range-grouping;
+
+      leaf stop-allocation {
+        type boolean;
+        default "false";
+      }
+    }
+  }
+
+  augment "/ralloc:resource-pools/ralloc:id-pool/"+
+    "ralloc:allocation/ralloc:request" {
+    leaf sync {
+      tailf:info "Synchronize allocation with all other allocation with "
+        +"same allocation id in other pools";
+      type boolean;
+      default "false";
+    }
+
+    leaf id {
+      tailf:info "Request a specific id";
+      type int32;
+      default "-1";
+    }
+  }
+}
