@@ -116,7 +116,7 @@ start_apps:
 	PYTHONPATH=".:$$PYTHONPATH" $(PYTHON) ./purchase_action.py $(START_FLAGS) &
 else
 start_apps:
-	PATH=.:$$PATH ./purchase_action $(START_FLAGS) &
+	PATH=".:$$PATH" ./purchase_action $(START_FLAGS) &
 endif
 
 start_done:

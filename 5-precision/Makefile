@@ -26,11 +26,16 @@ include $(CONFD_DIR)/src/confd/build/include.mk
 
 ######################################################################
 
+ifneq (,$(wildcard $(CONFD_DIR)/src/confd/pyapi))
+  # Your ConfD has Python support, so let's use that
+  CONFD_WITH_PYTHON = true
+endif
+
 CONFD_FLAGS = --addloadpath $(CONFD_DIR)/etc/confd 
 PYTHON ?= python
 START_FLAGS ?=
 
-all:	bookzone-example.fxs bookzone_example_ns.py \
+all:  bookzone-example.fxs apps \
 		$(CDB_DIR) \
 		$(CDB_DIR)/authors_init.xml \
 		$(CDB_DIR)/books_init.xml \
@@ -49,8 +54,33 @@ bookzone-example.fxs: bookzone-example.yang bookzone-example-ann.yang
 						-a bookzone-example-ann.yang \
 						bookzone-example.yang
 
+
+ifdef CONFD_WITH_PYTHON
+apps: bookzone_example_ns.py
+
 bookzone_example_ns.py: bookzone-example.fxs
 	$(CONFDC) --emit-python $@ $<
+
+else
+# No Python support in your ConfD, let's 
+# build your purchase_action and send_notif
+# handler from C
+apps: purchase_action send_notif
+
+OSTYPE  = $(shell uname -s)
+CFLAGS  += -D$(OSTYPE)
+SRC_pa  = purchase_action.c
+OBJS_pa = $(SRC_pa:.c=.o)
+SRC_sn  = send_notif.c
+OBJS_sn = $(SRC_sn:.c=.o)
+
+purchase_action: bookzone-example.h $(OBJS_pa)
+  $(CC) -o $@ $(OBJS_pa) $(LIBS)
+
+send_notif: bookzone-example.h $(OBJS_sn)
+  $(CC) -o $@ $(OBJS_sn) $(LIBS)
+
+endif
 
 # ConfD will load any XML files in the database directory as 
 # factory default data when it starts clean (no database files)
@@ -58,13 +88,17 @@ $(CDB_DIR)/%.xml: ../common/factory-defaults/%.xml
 	cp $< $@
 
 ######################################################################
-clean:	genclean pyclean traceclean dbclean 
+clean:  genclean pyclean cclean traceclean dbclean 
 
 genclean: iclean
 	-rm confderr.* 2> /dev/null || true
 
 pyclean:
 	-rm *_ns.py __init__.py *.pyc 2> /dev/null || true
+	-rm -r __pycache__ 2> /dev/null || true
+
+cclean:
+  -rm bookzone-example.h ./purchase_action ./send_notif
 
 traceclean:
 	-rm *.trace 2> /dev/null || true
@@ -81,8 +115,13 @@ start_confd:
 	# Must be done after ConfD has started
 	confd_load -lCO operational-data.xml
 
+ifdef CONFD_WITH_PYTHON
 start_apps:
-	$(PYTHON) ./purchase_action.py $(START_FLAGS) &
+  PYTHONPATH=".:$$PYTHONPATH" $(PYTHON) ./purchase_action.py $(START_FLAGS) &
+else
+start_apps:
+  PATH=".:$$PATH" ./purchase_action $(START_FLAGS) &
+endif
 
 start_done:
 	# Give the purchase action a moment to start in the background
@@ -103,11 +142,16 @@ cli-c:
 	$(CONFD_DIR)/bin/confd_cli -C --user=admin --groups=admin \
 		--interactive  || echo Exit
 
+# You are triggering the event notification manually now. 
+# In the real world, this would be sent automatically when
+# some application detects the right conditions (i.e. books
+# are in stock again)
+ifdef CONFD_WITH_PYTHON
 send-notif:
-	# You are triggering the event notification manually now. 
-	# In the real world, this would be sent automatically when
-	# some application detects the right conditions (i.e. books
-	# are in stock again)
-	$(PYTHON) ./send_notif.py
+  PYTHONPATH=".:$$PYTHONPATH" $(PYTHON) ./send_notif.py
+else
+send-notif:
+  ./send_notif
+endif
 
 ######################################################################

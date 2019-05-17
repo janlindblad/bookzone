@@ -60,6 +60,7 @@ genclean: iclean
 
 pyclean:
 	-rm *_ns.py __init__.py *.pyc 2> /dev/null || true
+	-rm -r __pycache__ 2> /dev/null || true
 
 traceclean:
 	-rm *.trace 2> /dev/null || true
