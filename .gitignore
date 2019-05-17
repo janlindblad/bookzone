@@ -1,7 +1,11 @@
-cli-history
-ssh-keydir
-confd-cdb/*.cdb
+**/cli-history/**
+**/ssh-keydir/**
+**/confd-cdb/**
 *.fxs
 *.log
+*.pyc
 *.access
+*.trace
 global.data
+confderr.*
+__init__.py
