@@ -13,7 +13,6 @@ from __future__ import print_function
 
 import sys
 import time
-from bookzone_example_ns import ns
 
 import confd
 from confd.dp import Action, Daemon

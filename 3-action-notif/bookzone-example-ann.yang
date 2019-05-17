@@ -1,0 +1,19 @@
+module bookzone-example-ann {
+  yang-version 1.1;
+  namespace 'http://example.com/ns/bookzone/ann';
+  prefix bz-ann;
+
+  import tailf-common {
+    prefix tailf;
+  }
+  import bookzone-example {
+    prefix bz;
+  }
+
+  description
+    "Implementation annotation module for the bookzone-example YANG module";
+
+  tailf:annotate /bz:users/bz:user/bz:purchase {
+    tailf:actionpoint purchase;
+  }
+}
