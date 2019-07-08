@@ -8,6 +8,10 @@ This stage contains the initial, tiny YANG module for the BookZone
 project. This stage gives you a first taste of YANG and the tools 
 involved.
 
+This section requires [ConfD Basic] and corresponds to Example 3-2 in
+the book.
+[ConfD Basic]: https://www.tail-f.com/confd-basic/
+
 
 Checking your tools
 -------------------

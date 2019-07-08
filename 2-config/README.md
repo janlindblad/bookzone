@@ -8,6 +8,7 @@ The module from 1-intro is expanded with a couple of additional
 lists, and uses some more specific types, such as uses enumerations 
 and identities and a typedef. This section requires [ConfD Basic]
 and corresponds to Example 3-12 in the book.
+[ConfD Basic]: https://www.tail-f.com/confd-basic/
 
 This stage contains the initial, tiny YANG module for the BookZone 
 project. This stage gives you a first taste of YANG and the tools 

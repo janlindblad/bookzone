@@ -14,3 +14,11 @@ __init__.py
 bookzone-example.h
 purchase_action
 send_notif
+
+**/netsim
+**/ncsc-out
+**/private-jar
+**/shared-jar
+**/build/classes
+**/namespaces/*.java
+**/state

@@ -74,10 +74,10 @@ SRC_sn  = send_notif.c
 OBJS_sn = $(SRC_sn:.c=.o)
 
 purchase_action: bookzone-example.h $(OBJS_pa)
-  $(CC) -o $@ $(OBJS_pa) $(LIBS)
+	$(CC) -o $@ $(OBJS_pa) $(LIBS)
 
 send_notif: bookzone-example.h $(OBJS_sn)
-  $(CC) -o $@ $(OBJS_sn) $(LIBS)
+	$(CC) -o $@ $(OBJS_sn) $(LIBS)
 
 endif
 
@@ -97,7 +97,7 @@ pyclean:
 	-rm -r __pycache__ 2> /dev/null || true
 
 cclean:
-  -rm bookzone-example.h ./purchase_action ./send_notif
+	-rm bookzone-example.h ./purchase_action ./send_notif
 
 traceclean:
 	-rm *.trace 2> /dev/null || true
@@ -150,7 +150,7 @@ send-notif:
   PYTHONPATH=".:$$PYTHONPATH" $(PYTHON) ./send_notif.py
 else
 send-notif:
-  ./send_notif
+	./send_notif
 endif
 
 ######################################################################

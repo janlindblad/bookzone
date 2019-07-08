@@ -14,6 +14,7 @@ This section requires [ConfD Basic] and corresponds to Example 3-15
 in the book. The action and notification handlers are implementated
 twice; once in Python and once in C. Apart from being instructive,
 this is necessary since ConfD Basic doesn't provide Python APIs.
+[ConfD Basic]: https://www.tail-f.com/confd-basic/
 
 If you have obtained ConfD Premium, which has Python API support,
 the Makefile will automatically switch to use that. Whichever ConfD

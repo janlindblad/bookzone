@@ -106,7 +106,7 @@ pyclean:
 	-rm -r __pycache__ 2> /dev/null || true
 
 cclean:
-  -rm bookzone-example.h ./purchase_action ./send_notif
+	-rm bookzone-example.h ./purchase_action ./send_notif
 
 traceclean:
 	-rm *.trace 2> /dev/null || true

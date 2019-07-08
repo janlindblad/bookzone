@@ -31,11 +31,28 @@ YANG, NETCONF, RESTCONF and gNXI software development kits (SDKs):
 [gNXI]: https://github.com/google/gnxi
 [NSO]: https://developer.cisco.com/docs/nso/#!getting-nso/getting-nso
 
+Once you have installed ConfD or NSO, you need to set a collection of
+environment variables in order for the system to find the commands, 
+sources and files necessary. The easiest way to do that is to source
+the resource (rc) file that comes with each installation. This also
+allows easily switching from one installed version to another or back
+again within seconds.
+
+If a bash user installed ConfD basic in \~/confd-basic/6.7/ the 
+following command would set up the environment correctly:
+
+> source \~/confd-basic/6.7/confdrc
+
+Similarly, for an NSO user with NSO installed in \~/nso/4.7/ the
+following command would set up the environment correctly:
+
+> source \~/nso/4.7/ncsrc
+
 Depending on your interests, you may not need all of these SDKs. The 
-example descriptions below list the SDKs you will need for each one.
-Apart from these SDKs, you will also need the following tools. Many 
-of them are often already installed on a developer's machine, but you 
-may want to make sure.
+example descriptions in "The YANG Journey" below list the SDKs you 
+will need for each one. Apart from these SDKs, you will also need the
+following tools. Many of them are often already installed on a 
+developer's machine, but you may want to make sure.
 
 ### make
 
