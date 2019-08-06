@@ -304,32 +304,32 @@ would be a hello exchange, a get-config and finally (if your mother
 taught you proper manners), a well behaved close-session.
 
 >
-`<?xml version="1.0" encoding="UTF-8"?>`
-`<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">`
-`  <capabilities>`
-`    <capability>urn:ietf:params:netconf:base:1.0</capability>`
-`  </capabilities>`
-`</hello>`
-`]]>]]>`
+`<?xml version="1.0" encoding="UTF-8"?>`  
+`<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">`  
+`  <capabilities>`  
+`    <capability>urn:ietf:params:netconf:base:1.0</capability>`  
+`  </capabilities>`  
+`</hello>`  
+`]]>]]>`  
 
 >
-`<?xml version="1.0" encoding="UTF-8"?>`
-`<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`
-`    <get-config><source><running/></source><filter type='xpath' select=' /books'/></get-config>`
-`</rpc>`
-`]]>]]>`
+`<?xml version="1.0" encoding="UTF-8"?>`  
+`<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
+`    <get-config><source><running/></source><filter type='xpath' select=' /books'/></get-config>`  
+`</rpc>`  
+`]]>]]>`  
 
 >
-`<?xml version="1.0" encoding="UTF-8"?>`
-`<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="0">`
-`    <close-session/>`
-`</rpc>`
+`<?xml version="1.0" encoding="UTF-8"?>`  
+`<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="0">`  
+`    <close-session/>`  
+`</rpc>`  
 
 Nobody in their right mind would connect an SSH client and type (or 
 even paste) this in, but if you what to give it a spin, just connect 
 don't let me deter you. Connect like this:
 
-> `$ ` **ssh admin@localhost -p 2022 -s netconf**
+> `$ ` **ssh admin@localhost -p 2022 -s netconf**  
 
 The password is 'admin'. Don't forget the ]]>]]> message separators 
 in between the messages (the hello message above locks the session to
@@ -339,7 +339,7 @@ There is a much easier way to send the above, which is to use a
 NETCONF client application. Here we will use netconf-console. To do 
 the above, sanity preserved, all you need to type is:
 
-> `$ ` **netconf-console --get-config -x /books**
+> `$ ` **netconf-console --get-config -x /books**  
 
 Well, that would use NETCONF 1.1 with different framing, but the 
 messages are the same.
@@ -348,30 +348,30 @@ The response that comes back starts like this and goes on for a
 couple of pages:
 
 >
-`<?xml version="1.0" encoding="UTF-8"?>`
-`<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`
-`  <data>`
-`    <books xmlns="http://example.com/ns/bookzone">`
-`      <book>`
-`        <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>`
-`        <author>Malala Yousafzai</author>`
-`        <format>`
-`          <isbn>9780297870913</isbn>`
+`<?xml version="1.0" encoding="UTF-8"?>`  
+`<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
+`  <data>`  
+`    <books xmlns="http://example.com/ns/bookzone">`  
+`      <book>`  
+`        <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>`  
+`        <author>Malala Yousafzai</author>`  
+`        <format>`  
+`          <isbn>9780297870913</isbn>`  
 
 In the 'nc' directory, there are a couple of files that you may play
 around with.
 
-> `$ ` **ls -1 nc/**
-`delete-the-art-of-war.nc.xml`
-`get-authors-and-books-subtrees.nc.xml`
-`many-changes.nc.xml`
-`purchase-book.nc.xml`
-`rollback-latest.nc.xml`
+> `$ ` **ls -1 nc/**  
+`delete-the-art-of-war.nc.xml`  
+`get-authors-and-books-subtrees.nc.xml`  
+`many-changes.nc.xml`  
+`purchase-book.nc.xml`  
+`rollback-latest.nc.xml`  
 
 To plug one of these files into netconf-console, just add it as an
 argument to the command line, like so
 
-> `$ ` **netconf-console nc/get-authors-and-books-subtrees.nc.xml**
+> `$ ` **netconf-console nc/get-authors-and-books-subtrees.nc.xml**  
 
 Next, let's add a book. Well, actually, why don't you go to section 
 6-augment instead? There are a whole bunch of the NETCONF (and 
@@ -390,63 +390,63 @@ If you are the lucky owner of ConfD Premium, then just go ahead and
 edit the configuration file, confd.conf, to enable RESTCONF
 
 >
-`  <restconf>`
-`    <enabled>true</enabled>`
-`  </restconf>`
+`  <restconf>`  
+`    <enabled>true</enabled>`  
+`  </restconf>`  
 
 Then issue a 
 
-> `$ ` **confd --reload**
+> `$ ` **confd --reload**  
 
 to make the change take effect. Or you could restart ConfD like this
 
-> `$ ` **make stop start**
+> `$ ` **make stop start**  
 
 Once you have ConfD running with RESTCONF enabled, go ahead and send
 a RESTCONF query to it. For example like this
 
-> `$ ` **curl -i -X GET http://localhost:8080/restconf/data/books -u admin:admin**
-`HTTP/1.1 200 OK`
-`Server: `
-`Date: Mon, 05 Aug 2019 15:32:46 GMT`
-`Last-Modified: Fri, 01 Jan 1971 00:00:00 GMT`
-`Cache-Control: private, no-cache, must-revalidate, proxy-revalidate`
-`Etag: 1565-19160-306505`
-`Content-Type: application/yang-data+xml`
-`Transfer-Encoding: chunked`
-`Pragma: no-cache`
-` `
-` `
-`<books xmlns="http://example.com/ns/bookzone"  xmlns:bz="http://example.com/ns/bookzone">`
-`  <book>`
-`    <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>`
-`    <author>Malala Yousafzai</author>`
-`    <format>`
-`      <isbn>9780297870913</isbn>`
+> `$ ` **curl -i -X GET http://localhost:8080/restconf/data/books -u admin:admin**  
+`HTTP/1.1 200 OK`  
+`Server: `  
+`Date: Mon, 05 Aug 2019 15:32:46 GMT`  
+`Last-Modified: Fri, 01 Jan 1971 00:00:00 GMT`  
+`Cache-Control: private, no-cache, must-revalidate, proxy-revalidate`  
+`Etag: 1565-19160-306505`  
+`Content-Type: application/yang-data+xml`  
+`Transfer-Encoding: chunked`  
+`Pragma: no-cache`  
+` `  
+` `  
+`<books xmlns="http://example.com/ns/bookzone"  xmlns:bz="http://example.com/ns/bookzone">`  
+`  <book>`  
+`    <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>`  
+`    <author>Malala Yousafzai</author>`  
+`    <format>`  
+`      <isbn>9780297870913</isbn>`  
 
 XML?? You prefer JSON? Ok, that's fine. Just add a header to accept
 that and go again.
 
-> `$ ` **curl -i -X GET http://localhost:8080/restconf/data/books -u admin:admin --header "Accept: application/yang-data+json"**
-`HTTP/1.1 200 OK`
-`Server: `
-`Date: Mon, 05 Aug 2019 15:34:18 GMT`
-`Last-Modified: Fri, 01 Jan 1971 00:00:00 GMT`
-`Cache-Control: private, no-cache, must-revalidate, proxy-revalidate`
-`Etag: 1565-19160-306505`
-`Content-Type: application/yang-data+json`
-`Transfer-Encoding: chunked`
-`Pragma: no-cache`
-` `
-`{`
-`  "bookzone-example:books": {`
-`    "book": [`
-`      {`
-`        "title": "I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban",`
-`        "author": "Malala Yousafzai",`
-`        "format": [`
-`          {`
-`            "isbn": "9780297870913",`
+> `$ ` **curl -i -X GET http://localhost:8080/restconf/data/books -u admin:admin --header "Accept: application/yang-data+json"**  
+`HTTP/1.1 200 OK`  
+`Server: `  
+`Date: Mon, 05 Aug 2019 15:34:18 GMT`  
+`Last-Modified: Fri, 01 Jan 1971 00:00:00 GMT`  
+`Cache-Control: private, no-cache, must-revalidate, proxy-revalidate`  
+`Etag: 1565-19160-306505`  
+`Content-Type: application/yang-data+json`  
+`Transfer-Encoding: chunked`  
+`Pragma: no-cache`  
+` `  
+`{`  
+`  "bookzone-example:books": {`  
+`    "book": [`  
+`      {`  
+`        "title": "I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban",`  
+`        "author": "Malala Yousafzai",`  
+`        "format": [`  
+`          {`  
+`            "isbn": "9780297870913",`  
 
 There is a bunch of RESTCONF related files in the rc/ directory here
 if you want to go on trying things out. But as noted earlier, I'd

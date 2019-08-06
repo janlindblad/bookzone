@@ -105,8 +105,9 @@ Suggested Steps
 Looking for action? Let's jump right in. To purchase a book, invoke
 the purchase action from the ConfD CLI like this
 
-> `# ` **users user janl purchase title "What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action" format paperback number-of-copies 1**
-`out-of-stock`
+> 
+`# ` **users user janl purchase title "What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action" format paperback number-of-copies 1**  
+`out-of-stock`  
 
 The purchase action is defined under list user in the YANG. It was 
 modeled this way since users are the active part in this operation
@@ -125,7 +126,7 @@ action response back to the operator.
 The implementation code that actually does something interesting
 (see purchase_action.py) consists of a single line:
 
-> `output.out_of_stock.create()`
+> `output.out_of_stock.create()`  
 
 This means the action will invariably simply return an out-of-stock 
 response. Talk about a lazy implementor! Anyway, injecting some 
@@ -138,15 +139,17 @@ happen.
 Now we have to play the role of the system and decice when it is time
 to send that notification. When you feel the right time has come, run
 
-> `$ ` **./send_notif**
-`Trader Shipping notification delivered`
+> 
+`$ ` **./send_notif**  
+`Trader Shipping notification delivered`  
 
 Again, the implementation of the notification sender is a bit on the
 simplistic side. The interesting code (see send_notif.py) consists of
 two lines:
 
-> `title = "What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action"`
-`send_shipping_notif(trader, user="janl", title=title, fmt=ns.bz_paperback, copies=1)`
+> 
+`title = "What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action"`  
+`send_shipping_notif(trader, user="janl", title=title, fmt=ns.bz_paperback, copies=1)`  
 
 It always sends a notification for this precise title, format and a 
 single copy, no matter what you may have purchased previously.
@@ -164,35 +167,36 @@ NETCONF streams for different purposes. In ConfD they are listed in
 the confd.conf file:
 
 >
-`  <notifications>`
-`    <eventStreams>`
-`      <stream>`
-`        <name>Trader</name>`
-`        <description>BookZone trading and delivery events</description>`
-`        <replaySupport>true</replaySupport>`
-`        <builtinReplayStore>`
-`          <enabled>true</enabled>`
-`          <dir>./confd-cdb</dir>`
-`          <maxSize>S10M</maxSize>`
-`          <maxFiles>50</maxFiles>`
-`        </builtinReplayStore>`
-`      </stream>`
-`    </eventStreams>`
-`  </notifications>`
+`  <notifications>`  
+`    <eventStreams>`  
+`      <stream>`  
+`        <name>Trader</name>`  
+`        <description>BookZone trading and delivery events</description>`  
+`        <replaySupport>true</replaySupport>`  
+`        <builtinReplayStore>`  
+`          <enabled>true</enabled>`  
+`          <dir>./confd-cdb</dir>`  
+`          <maxSize>S10M</maxSize>`  
+`          <maxFiles>50</maxFiles>`  
+`        </builtinReplayStore>`  
+`      </stream>`  
+`    </eventStreams>`  
+`  </notifications>`  
 
 This means the stream name is 'Trader' (this is case sensitive). 
 Let's create the subscription using netconf-console
 
-> `$ ` **netconf-console --create-subscription Trader**
+> `$ ` **netconf-console --create-subscription Trader**  
 
 This will actually send
 
-`<?xml version="1.0" encoding="UTF-8"?>`
-`<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`
-`  <create-subscription xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">`
-`    <stream>Trader</stream>`
-`  </create-subscription>`
-`</rpc>`
+>
+`<?xml version="1.0" encoding="UTF-8"?>`  
+`<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
+`  <create-subscription xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">`  
+`    <stream>Trader</stream>`  
+`  </create-subscription>`  
+`</rpc>`  
 
 The NETCONF server responds immediately with an ok message, but then
 keeps the session open. When something happens, a notification will 
@@ -200,10 +204,10 @@ be delivered here. This delivery mechanism is called a long-running
 RPC. It basically never ends.
 
 >
-`<?xml version="1.0" encoding="UTF-8"?>`
-`<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`
-`  <ok/>`
-`</rpc-reply>`
+`<?xml version="1.0" encoding="UTF-8"?>`  
+`<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
+`  <ok/>`  
+`</rpc-reply>`  
 
 Hint: if you want to get out of this, try hitting ctrl+z, ^Z. If your
 shell is a bash shell, you can kill the backgrounded process with 
@@ -215,21 +219,22 @@ window, or hit ^Z, run send_notif, and return to your subscription
 with the fg command. 
 
 >
-`$ ` **./send_notif**
-`Trader Shipping notification delivered`
+`$ ` **./send_notif**  
+`Trader Shipping notification delivered`  
 
 The notification will then be displayed immediately.
 
-`<?xml version="1.0" encoding="UTF-8"?>`
-`<notification xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">`
-`  <eventTime>2019-08-06T13:26:04.559832+00:00</eventTime>`
-`  <shipping xmlns="http://example.com/ns/bookzone">`
-`    <user>janl</user>`
-`    <title>What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action</title>`
-`    <format xmlns:bz="http://example.com/ns/bookzone">bz:paperback</format>`
-`    <number-of-copies>1</number-of-copies>`
-`  </shipping>`
-`</notification>`
+>
+`<?xml version="1.0" encoding="UTF-8"?>`  
+`<notification xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">`  
+`  <eventTime>2019-08-06T13:26:04.559832+00:00</eventTime>`  
+`  <shipping xmlns="http://example.com/ns/bookzone">`  
+`    <user>janl</user>`  
+`    <title>What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action</title>`  
+`    <format xmlns:bz="http://example.com/ns/bookzone">bz:paperback</format>`  
+`    <number-of-copies>1</number-of-copies>`  
+`  </shipping>`  
+`</notification>`  
 
 
 Contributions
