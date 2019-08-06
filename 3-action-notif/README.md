@@ -154,7 +154,7 @@ two lines:
 It always sends a notification for this precise title, format and a 
 single copy, no matter what you may have purchased previously.
 
-Q: So who received this notification now? 
+Q: So who received this notification now?  
 A: Nobody!
 
 Nobody had subscribed for this kind of notifications. ConfD knew 
@@ -167,21 +167,21 @@ NETCONF streams for different purposes. In ConfD they are listed in
 the confd.conf file:
 
 >
-`  <notifications>`  
-`    <eventStreams>`  
-`      <stream>`  
-`        <name>Trader</name>`  
-`        <description>BookZone trading and delivery events</description>`  
-`        <replaySupport>true</replaySupport>`  
-`        <builtinReplayStore>`  
-`          <enabled>true</enabled>`  
-`          <dir>./confd-cdb</dir>`  
-`          <maxSize>S10M</maxSize>`  
-`          <maxFiles>50</maxFiles>`  
-`        </builtinReplayStore>`  
-`      </stream>`  
-`    </eventStreams>`  
-`  </notifications>`  
+`  <notifications>`  
+`    <eventStreams>`  
+`      <stream>`  
+`        <name>Trader</name>`  
+`        <description>BookZone trading and delivery events</description>`  
+`        <replaySupport>true</replaySupport>`  
+`        <builtinReplayStore>`  
+`          <enabled>true</enabled>`  
+`          <dir>./confd-cdb</dir>`  
+`          <maxSize>S10M</maxSize>`  
+`          <maxFiles>50</maxFiles>`  
+`        </builtinReplayStore>`  
+`      </stream>`  
+`    </eventStreams>`  
+`  </notifications>`  
 
 This means the stream name is 'Trader' (this is case sensitive). 
 Let's create the subscription using netconf-console
@@ -193,9 +193,9 @@ This will actually send
 >
 `<?xml version="1.0" encoding="UTF-8"?>`  
 `<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
-`  <create-subscription xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">`  
-`    <stream>Trader</stream>`  
-`  </create-subscription>`  
+`  <create-subscription xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">`  
+`    <stream>Trader</stream>`  
+`  </create-subscription>`  
 `</rpc>`  
 
 The NETCONF server responds immediately with an ok message, but then
@@ -206,7 +206,7 @@ RPC. It basically never ends.
 >
 `<?xml version="1.0" encoding="UTF-8"?>`  
 `<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
-`  <ok/>`  
+`  <ok/>`  
 `</rpc-reply>`  
 
 Hint: if you want to get out of this, try hitting ctrl+z, ^Z. If your
@@ -227,13 +227,13 @@ The notification will then be displayed immediately.
 >
 `<?xml version="1.0" encoding="UTF-8"?>`  
 `<notification xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">`  
-`  <eventTime>2019-08-06T13:26:04.559832+00:00</eventTime>`  
-`  <shipping xmlns="http://example.com/ns/bookzone">`  
-`    <user>janl</user>`  
-`    <title>What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action</title>`  
-`    <format xmlns:bz="http://example.com/ns/bookzone">bz:paperback</format>`  
-`    <number-of-copies>1</number-of-copies>`  
-`  </shipping>`  
+`  <eventTime>2019-08-06T13:26:04.559832+00:00</eventTime>`  
+`  <shipping xmlns="http://example.com/ns/bookzone">`  
+`    <user>janl</user>`  
+`    <title>What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action</title>`  
+`    <format xmlns:bz="http://example.com/ns/bookzone">bz:paperback</format>`  
+`    <number-of-copies>1</number-of-copies>`  
+`  </shipping>`  
 `</notification>`  
 
 

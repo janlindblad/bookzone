@@ -306,23 +306,23 @@ taught you proper manners), a well behaved close-session.
 >
 `<?xml version="1.0" encoding="UTF-8"?>`  
 `<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">`  
-`  <capabilities>`  
-`    <capability>urn:ietf:params:netconf:base:1.0</capability>`  
-`  </capabilities>`  
+`  <capabilities>`  
+`    <capability>urn:ietf:params:netconf:base:1.0</capability>`  
+`  </capabilities>`  
 `</hello>`  
 `]]>]]>`  
 
 >
 `<?xml version="1.0" encoding="UTF-8"?>`  
 `<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
-`    <get-config><source><running/></source><filter type='xpath' select=' /books'/></get-config>`  
+`    <get-config><source><running/></source><filter type='xpath' select=' /books'/></get-config>`  
 `</rpc>`  
 `]]>]]>`  
 
 >
 `<?xml version="1.0" encoding="UTF-8"?>`  
 `<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="0">`  
-`    <close-session/>`  
+`    <close-session/>`  
 `</rpc>`  
 
 Nobody in their right mind would connect an SSH client and type (or 
@@ -350,13 +350,13 @@ couple of pages:
 >
 `<?xml version="1.0" encoding="UTF-8"?>`  
 `<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
-`  <data>`  
-`    <books xmlns="http://example.com/ns/bookzone">`  
-`      <book>`  
-`        <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>`  
-`        <author>Malala Yousafzai</author>`  
-`        <format>`  
-`          <isbn>9780297870913</isbn>`  
+`  <data>`  
+`    <books xmlns="http://example.com/ns/bookzone">`  
+`      <book>`  
+`        <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>`  
+`        <author>Malala Yousafzai</author>`  
+`        <format>`  
+`          <isbn>9780297870913</isbn>`  
 
 In the 'nc' directory, there are a couple of files that you may play
 around with.
@@ -390,9 +390,9 @@ If you are the lucky owner of ConfD Premium, then just go ahead and
 edit the configuration file, confd.conf, to enable RESTCONF
 
 >
-`  <restconf>`  
-`    <enabled>true</enabled>`  
-`  </restconf>`  
+`  <restconf>`  
+`    <enabled>true</enabled>`  
+`  </restconf>`  
 
 Then issue a 
 
@@ -415,14 +415,14 @@ a RESTCONF query to it. For example like this
 `Content-Type: application/yang-data+xml`  
 `Transfer-Encoding: chunked`  
 `Pragma: no-cache`  
-` `  
-` `  
+` `  
+` `  
 `<books xmlns="http://example.com/ns/bookzone"  xmlns:bz="http://example.com/ns/bookzone">`  
-`  <book>`  
-`    <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>`  
-`    <author>Malala Yousafzai</author>`  
-`    <format>`  
-`      <isbn>9780297870913</isbn>`  
+`  <book>`  
+`    <title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>`  
+`    <author>Malala Yousafzai</author>`  
+`    <format>`  
+`      <isbn>9780297870913</isbn>`  
 
 XML?? You prefer JSON? Ok, that's fine. Just add a header to accept
 that and go again.
@@ -439,14 +439,14 @@ that and go again.
 `Pragma: no-cache`  
 ` `  
 `{`  
-`  "bookzone-example:books": {`  
-`    "book": [`  
-`      {`  
-`        "title": "I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban",`  
-`        "author": "Malala Yousafzai",`  
-`        "format": [`  
-`          {`  
-`            "isbn": "9780297870913",`  
+`  "bookzone-example:books": {`  
+`    "book": [`  
+`      {`  
+`        "title": "I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban",`  
+`        "author": "Malala Yousafzai",`  
+`        "format": [`  
+`          {`  
+`            "isbn": "9780297870913",`  
 
 There is a bunch of RESTCONF related files in the rc/ directory here
 if you want to go on trying things out. But as noted earlier, I'd
