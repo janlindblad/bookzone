@@ -101,7 +101,146 @@ the server whenever you like by just issuing
 Suggested Steps
 ---------------
 
-%% To be written %%
+Constraints are important to keep a YANG model meaningful. The 
+constraints prevent operations that would otherwise leave the system 
+in an inconsistent state, or remove data that makes little sense.
+
+For example, the inventory in our book catalogue only makes sense for 
+physical items, and not for items that are delivered by copying a 
+file. In the bookzone-example.yang, we placed a YANG when-expression
+on the inventory data which makes sure file based inventory items are
+not present in the data tree.
+
+If we list show the book catalog contents for The Neverending Story, 
+we can see there are two items. One is a paperback edition, the other
+an mp3 recording of it. The mp3 edition is different than a CD-book
+in that it is delivered by file copy, not on a physical medium.
+
+`# ` **show running-config books book The\ Neverending\ Story|tab**  
+`TITLE                  AUTHOR        LANGUAGE  ISBN           FORMAT ID  PRICE  `  
+`--------------------------------------------------------------------------------`  
+`The Neverending Story  Michael Ende  english   9780140386332  paperback  8.5    `  
+`                                               9781452656304  mp3        29.95  `  
+` `
+`!`
+
+The |tab (pipe tab) at the end of the command ensures the data is
+displayed in tabular format. If we display the inventory data for 
+this title, we can see the CLI adds hyphens - for the elements that
+don't exist according to the YANG data model.
+
+`# ` **show books book The\ Neverending\ Story | tab**               
+`                                                  IN                          `  
+`TITLE                  POPULARITY  ISBN           STOCK  RESERVED  AVAILABLE  `  
+`------------------------------------------------------------------------------`  
+`The Neverending Story  47          9780140386332  4      0         4          `  
+`                                   9781452656304  -      -         -          `  
+
+Or, perhaps even more clearly in non-tabular form.
+
+`# ` **show books book The\ Neverending\ Story | notab**  
+`books book "The Neverending Story"`  
+` popularity 47`  
+` format 9780140386332`  
+`  number-of-copies in-stock 4`  
+`  number-of-copies reserved 0`  
+`  number-of-copies available 4`  
+` format 9781452656304`  
+
+There simply are no number-of-copies data for the mp3 edition of the
+title (isbn 9781452656304).
+
+Similarly, we added some constraints on the book catalogue itself.
+For example, every book in the catalogue must have an author. We can 
+demonstrate this constraint in action if we delete one of the authors
+in the sample data.
+
+`# ` **con**  
+`Entering configuration mode terminal`  
+`(config)# ` **no authors author**  
+`Possible completions:`  
+`  Douglas Adams  Malala Yousafzai  Michael Ende  Per Espen Stoknes  Sun Tzu  <cr>`  
+`(config)# ` **no authors author Michael\ Ende**  
+`(config)# ` **commit**  
+`Aborted: illegal reference 'books book "The Neverending Story" author'`  
+`(config)# no books book The\ Neverending\ Story `  
+`(config)# commit`  
+`Commit complete.`  
+
+At first, when we try to delete the author and commit, the system
+refuses, as that would violate the constraint that all books must 
+have an author. If we delete the book(s) that reference this author,
+the whole transaction works fine. The order that this happens within
+the transaction is irrelevant. Transactions do not have time 
+internally, there is no before and after inside a transaction.
+
+Since we are (well I am at least) sorry to see this book go, let's
+get it back again. It's easy using a rollback command. The rollback
+simply loads a file with undo information that the system generates 
+for each transaction. Once the undo information is loaded into the
+transaction, it can be viewed and modified at will. It's just another
+transaction like any other. No magic there.
+
+`(config)# ` **rollback configuration**  
+`(config)# ` **show c**  
+`authors author "Michael Ende"`  
+` account-id 1001`  
+`!`  
+`books book "The Neverending Story"`  
+` author   "Michael Ende"`  
+` language english`  
+` format 9780140386332`  
+`  format-id paperback`  
+`  price     8.5`  
+` !`  
+` format 9781452656304`  
+`  format-id mp3`  
+`  price     29.95`  
+` !`  
+`!`  
+`(config)# commit`  
+`Commit complete.`  
+
+Adding back the book works fine as long as we are also adding back
+the author no later than in the same transaction. It doesn't matter
+in which order these objects are (re-)created within the transaction.
+Transactions do not have internal time.
+
+Since every transaction generates a rollback file, we can of course
+undo the operation that added back the author and book title. And 
+revert that again with yet another rollback. It is also possible to
+rollback selective transactions from the transaction history, or only
+parts of a transaction, and to edit the result before committing it.
+
+`(config)# ` **rollback configuration**  
+`(config)# ` **commit**
+`Commit complete.`
+`JLINDBLA-M-W0J2(config)# ` **rollback configuration**
+`JLINDBLA-M-W0J2(config)# ` **show c**                
+`authors author "Michael Ende"`  
+` account-id 1001`  
+`!`  
+`books book "The Neverending Story"`  
+` author   "Michael Ende"`  
+` language english`  
+` format 9780140386332`  
+`  format-id paperback`  
+`  price     8.5`  
+` !`  
+` format 9781452656304`  
+`  format-id mp3`  
+`  price     29.95`  
+` !`  
+`!`  
+`# ` **show running-config books book The\ Neverending\ Story|tab**  
+`TITLE                  AUTHOR        LANGUAGE  ISBN           FORMAT ID  PRICE  `  
+`--------------------------------------------------------------------------------`  
+`The Neverending Story  Michael Ende  english   9780140386332  paperback  8.5    `  
+`                                               9781452656304  mp3        29.95  `  
+
+The YANG constraints pertain equally to all management interfaces, 
+such as NETCONF and RESTCONF as well.
+
 
 Contributions
 -------------
