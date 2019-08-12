@@ -101,7 +101,92 @@ the server whenever you like by just issuing
 Suggested Steps
 ---------------
 
-%% To be written %%
+This stage is about working with operational data. This is data that
+is normally computed by the managed system, and provided to the user
+so that you can understand the operational state of the system. In 
+this example, all the operational data is static, fake data fed into 
+the database, and remains there until you delete or modify it.
+
+From a YANG perspective, the operational data is often located under
+configuration data, because the operational data says something about
+a configured object. In this example, the operational data consists 
+of inventory data for each title in our book catalogue, and a
+popularity metric (number of copies sold of this title in the last
+12 months).
+
+To see the entire book catalogue and all the associated operational
+data, simply show books
+
+> `# ` **show books**  
+`TITLE                                                    POPULARITY  ISBN           STOCK  RESERVED  AVAILABLE`  
+`--------------------------------------------------------------------------------------------------------------`  
+`I Am Malala: The Girl Who Stood Up for Education ...     89          9780297870913  12     2         10`         
+`The Art of War                                           -           160459893X     -      -         - `         
+`The Hitchhiker's Guide to the Galaxy                     289         0330258648     32     3         29`         
+`                                                                     9781400052929  3      -         3 `         
+`The Neverending Story                                    47          9780140386332  4      0         4 `         
+`                                                                     9781452656304  -      -         - `         
+`What We Think About When We Try Not To Think About ...   17          9781603585835  2      2         0 `         
+
+Entries marked with a dash - has no value at all, not even zero.
+
+The book catalogue could be very long. It's also possible to display 
+the data for a particular title (a table row). Just specify the 
+title. Use tab-completion to save yourself from excessive typing. 
+Note how the command line interface escapes each space in the title 
+value with a backslash. This is normal.
+
+`# ` **show books book [TAB]**  
+`Possible completions:`  
+`  I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban                                `  
+`  The Art of War                                                                                              `  
+`  The Hitchhiker's Guide to the Galaxy                                                                        `  
+`  The Neverending Story                                                                                       `  
+`  What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action`  
+`  |                                                                                                           `  
+`  <cr>                                                                                                        `  
+`Possible match completions:`  
+`  format  popularity`  
+`JLINDBLA-M-W0J2# ` **show books book The H[TAB][TAB]**  
+`Possible completions:`  
+`  0330258648  9781400052929  |  <cr>`  
+`Possible match completions:`  
+`  number-of-copies`  
+`# ` show books book The\ Hitchhiker's\ Guide\ to\ the\ Galaxy format 0[TAB]
+`# ` show books book The\ Hitchhiker's\ Guide\ to\ the\ Galaxy format 0330258648 
+`            IN                          `  
+`ISBN        STOCK  RESERVED  AVAILABLE  `  
+`----------------------------------------`  
+`0330258648  32     3         29         `  
+
+Similarly, a particular column can be displayed like this.
+
+`# ` **show books book format number-of-copies available**  
+`TITLE                                                    ISBN           AVAILABLE`  
+`---------------------------------------------------------------------------------`  
+`I Am Malala: The Girl Who Stood Up for Education ...     9780297870913  10       `  
+`The Art of War                                           160459893X     -        `  
+`The Hitchhiker's Guide to the Galaxy                     0330258648     29       `  
+`                                                         9781400052929  3        `  
+`The Neverending Story                                    9780140386332  4        `  
+`                                                         9781452656304  -        `  
+`What We Think About When We Try Not To Think About ...   9781603585835  0        `  
+
+By adding a value at the end, we could for example display all books 
+that are out of stock at the moment.
+
+`# ` **show books book format number-of-copies available 0**
+`TITLE                                                    POPULARITY  ISBN           STOCK  RESERVED  AVAILABLE`  
+`--------------------------------------------------------------------------------------------------------------`  
+`What We Think About When We Try Not To Think About ...   17          9781603585835  2      2         0        `  
+` `  
+`# `  
+
+Similar queries can be formulated using NETCONF and RESTCONF using 
+subtree filtering. If the server also supports XPath filters, even 
+more advanced queries can formulated than shown above. Both subtree
+and XPath filters are demonstrated in section 6-augment.
+
 
 Contributions
 -------------
