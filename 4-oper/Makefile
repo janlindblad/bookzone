@@ -27,8 +27,11 @@ include $(CONFD_DIR)/src/confd/build/include.mk
 ######################################################################
 
 ifneq (,$(wildcard $(CONFD_DIR)/src/confd/pyapi))
-  # Your ConfD has Python support, so let's use that
-  CONFD_WITH_PYTHON = true
+# Your ConfD has Python support, let's use that by default
+CONFD_WITH_PYTHON = true
+ifndef USE_C
+USE_PYTHON = true
+endif
 endif
 
 CONFD_FLAGS = --addloadpath $(CONFD_DIR)/etc/confd 
@@ -54,7 +57,7 @@ bookzone-example.fxs: bookzone-example.yang bookzone-example-ann.yang
 						bookzone-example.yang
 
 
-ifdef CONFD_WITH_PYTHON
+ifdef USE_PYTHON
 apps: bookzone_example_ns.py
 
 bookzone_example_ns.py: bookzone-example.fxs
@@ -112,11 +115,11 @@ start_confd:
 	$(CONFD) -c confd.conf $(CONFD_FLAGS)
 	# Load some operational sample data
 	# Must be done after ConfD has started
-	confd_load -lCO operational-data.xml
+	confd_load -l -m -O operational-data.xml
 
-ifdef CONFD_WITH_PYTHON
+ifdef USE_PYTHON
 start_apps:
-	PYTHONPATH=".:$$PYTHONPATH" $(PYTHON) ./purchase_action.py $(START_FLAGS) &
+	$(PYTHON) -m purchase_action $(START_FLAGS) &
 else
 start_apps:
   PATH=".:$$PATH" ./purchase_action $(START_FLAGS) &
@@ -145,9 +148,9 @@ cli-c:
 # In the real world, this would be sent automatically when
 # some application detects the right conditions (i.e. books
 # are in stock again)
-ifdef CONFD_WITH_PYTHON
+ifdef USE_PYTHON
 send-notif:
-  PYTHONPATH=".:$$PYTHONPATH" $(PYTHON) ./send_notif.py
+	$(PYTHON) -m send_notif
 else
 send-notif:
 	./send_notif

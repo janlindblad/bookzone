@@ -137,11 +137,13 @@ the [TAB]-key displays the completions at that point.
 
 The part we want to configure is inside books, so type a 'b' and hit
 the [TAB] key to let the system fill in 'books' for you. Hit [TAB] 
-again to get the next word 'book'. Hit [TAB] yet again to see the 
-options at this point:
+again to get the next word 'book'. If you hit [TAB] yet again to at
+this point, nothing comes up. Because there is nothing configured 
+under this location yet. If you hit question mark ?, you will see the
+type of the data expected at this point:
 
 > 
-`JLINDBLA-M-W0J2(config)# ` **books book [TAB]**  
+`JLINDBLA-M-W0J2(config)# ` **books book ?**  
 `Possible completions:`  
 `  <title:string>  range`  
 `JLINDBLA-M-W0J2(config)# `  

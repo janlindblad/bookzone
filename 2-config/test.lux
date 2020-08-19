@@ -1,0 +1,242 @@
+[doc Testing 2-condfig per README.md]
+# Run tests with https://github.com/hawk/lux
+
+[shell 1]
+    [progress build]
+    !make clean all start
+    ?Build complete
+    !make cli-c
+    ?Welcome|admin connected
+    ?#
+
+    [progress cli]
+    !show running-config books | nomore
+    ???books book "I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban"
+    ???author "Malala Yousafzai"
+    ???format 9780297870913
+    ???format-id hardcover
+    ???books book "The Art of War"
+    ?author[ ]+"Sun Tzu"
+    ?language[ ]+english
+    ?format[ ]+160459893X
+    ?format-id[ ]+paperback
+    ?price[ ]+12.75
+    ???books book "The Hitchhiker's Guide to the Galaxy"
+    ???#
+
+    !show running-config users
+    ???users user bc
+    ???name "Benoît Claise"
+    ???users user janl
+    ???name "Jan Lindblad"
+    ???users user joe
+    ???name "Joe Clarke"
+    ???#
+
+    !show running-config authors
+    ???authors author "Douglas Adams"
+    ???account-id 1010
+    ???authors author "Malala Yousafzai"
+    ???account-id 1011
+    ???authors author "Michael Ende"
+    ???account-id 1001
+    ???authors author "Per Espen Stoknes"
+    ???account-id 1111
+    ???authors author "Sun Tzu"
+    ???account-id 1100
+    ???#
+
+    !con
+    ???Entering configuration mode terminal
+    !books book $_TAB_
+    ???Possible completions:
+    ???<title:string>
+    ???I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban
+    ???The Art of War
+    ???The Hitchhiker's Guide to the Galaxy
+    ???The Neverending Story
+    ???What We Think About When We Try Not To Think About Global Warming
+    ???(config)#
+
+    !books book "Actionable Gamification: Beyond Points, Badges, and Leaderboards"
+    ???(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)#
+    !$_TAB_
+    ???Possible completions:
+    ???author
+    ???format
+    ???language
+    ???---
+    ?commit[ ]+Commit current set of changes
+    ?describe[ ]+Display transparent command information
+    ???(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)#
+
+    !author "Yu-kai Chou" $_TAB_
+    ???% Invalid input detected at '^' marker.
+    ???(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)#
+
+    !language $_TAB_
+    ???Possible completions:
+    ?arabic[ ]+chinese[ ]+english[ ]+french[ ]+moroccan-arabic[ ]+swahili[ ]+swedish
+    !english
+    ???(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)#
+
+    !format ?
+    ???Possible completions:
+    ???<isbn:string, must be exactly 10 chars>
+    ???<isbn:string, must be exactly 13 chars>
+    !format willfindout23
+    ???syntax error: "willfindout23" is not a valid value.
+    ???(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)#
+    !format 9781511744041
+    ???Value for 'format-id' [audio-cd,epub,file-idty,hardcover,...]:
+    !paperback
+    ???(config-format-9781511744041)#
+
+    !$_TAB_
+    ???Possible completions:
+    ???format-id
+    ???price
+    ???---
+    ?commit[ ]+Commit current set of changes
+    ?describe[ ]+Display transparent command information
+    ???(config-format-9781511744041)#
+    !price 22.22
+    ???(config-format-9781511744041)#
+
+    !commit
+    ???Aborted: illegal reference 'books book "Actionable Gamification: Beyond Points, Badges, and Leaderboards" author'
+    ???(config-format-9781511744041)#
+
+    !top
+    ???(config)#
+    !authors author ?
+    ???Possible completions:
+    ???<name:string>
+    ???Douglas Adams
+    ???Malala Yousafzai
+    ???Michael Ende
+    ???Per Espen Stoknes
+    ???Sun Tzu
+    !authors author "Yu-kai Chou"
+    ???(config-author-Yu-kai Chou)#
+
+    !top
+    ???(config)#
+    !show c
+    ???authors author "Yu-kai Chou"
+    ???books book "Actionable Gamification: Beyond Points, Badges, and Leaderboards"
+    ?author[ ]+"Yu-kai Chou"
+    ?language[ ]+english
+    ?format[ ]+9781511744041
+    ?format-id[ ]+paperback
+    ?price[ ]+22.22
+    ???(config)#
+
+    !commit
+    ???Commit complete.
+    ???(config)#
+    !exit
+    ???#
+    !exit
+    ???SH-PROMPT:
+
+    [progress netconf]
+    !python3 $$CONFD_DIR/bin/netconf-console --get-config -x /books
+    ???<?xml version="1.0" encoding="UTF-8"?>
+    ???<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">
+    ???<data>
+    ???<books xmlns="http://example.com/ns/bookzone">
+    ???<book>
+    ???<title>I Am Malala: The Girl Who Stood Up for Education
+    ???<author>Malala Yousafzai</author>
+    ???<format>
+    ???<isbn>9780297870913</isbn>
+    ???</book>
+    ???SH-PROMPT:
+
+    !ls -1 nc/
+    ???delete-the-art-of-war.nc.xml
+    ???get-authors-and-books-subtrees.nc.xml
+    ???many-changes.nc.xml
+    ???purchase-book.nc.xml
+    ???rollback-latest.nc.xml
+    ???SH-PROMPT:
+
+    !python3 $$CONFD_DIR/bin/netconf-console nc/get-authors-and-books-subtrees.nc.xml
+    ???<?xml version="1.0" encoding="UTF-8"?>
+    ???<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">
+    ???<data>
+    ???<books xmlns="http://example.com/ns/bookzone">
+    ???<book>
+    ???<title>I Am Malala: The Girl Who Stood Up for Education
+    ???<author>Malala Yousafzai</author>
+    ???<format>
+    ???<isbn>9780297870913</isbn>
+    ???</book>
+    ???SH-PROMPT:
+
+    [progress is restconf supported?]
+    !curl -i -X GET http://localhost:8080/restconf/data/bookzone-example:books -u admin:admin --header "Accept: application/yang-data+json"
+    ?Failed to connect to localhost port 8080: Connection refused|HTTP/1.1 404 Not Found
+
+    !cp confd.conf confd.conf.orig
+    ???SH-PROMPT:
+    !awk '/<restconf>/{print;replace=1} /<\/restconf>/{replace=0} /<enabled>false<\/enabled>/{if(replace)print "    <enabled>true</enabled>"} {if(!replace)print}' confd.conf.orig > confd.conf
+    ???SH-PROMPT:
+    !confd --reload
+    ???SH-PROMPT:
+    [sleep 3]
+    ???SH-PROMPT:
+
+    # If connection still refused after enabling restconf, this ConfD doesn't support it
+    +Failed to connect to localhost port 8080: Connection refused
+
+    !curl -i -X GET http://localhost:8080/restconf/data/bookzone-example:books -u admin:admin
+    ???HTTP/1.1 200 OK
+    [progress restconf]
+    ???Date
+    ???Last-Modified
+    ???Cache-Control
+    ???private, no-cache, must-revalidate, proxy-revalidate
+    ???Etag
+    ???Content-Type
+    ???application/yang-data+xml
+    ???Transfer-Encoding
+    ???Pragma
+    #...
+    ???<books xmlns="http://example.com/ns/bookzone"
+    ???xmlns:bz="http://example.com/ns/bookzone">
+    ???<book>
+    ???<title>I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban</title>
+    ???<author>Malala Yousafzai</author>
+    ???<format>
+    ???<isbn>9780297870913</isbn>
+    ???SH-PROMPT:
+
+    !curl -i -X GET http://localhost:8080/restconf/data/bookzone-example:books -u admin:admin --header "Accept: application/yang-data+json"
+    ???HTTP/1.1 200 OK
+    ???Date
+    ???Last-Modified
+    ???Cache-Control
+    ???private, no-cache, must-revalidate, proxy-revalidate
+    ???Etag
+    ???Content-Type
+    ???application/yang-data+json
+    ???Transfer-Encoding
+    ???Pragma
+    #...
+    ???{
+    ???"bookzone-example:books": {
+    ???"book": [
+    ???{
+    ???"title": "I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban",
+    ???"author": "Malala Yousafzai",
+    ???"format": [
+    ???{
+    ???"isbn": "9780297870913",
+    ???SH-PROMPT:
+
+[cleanup]
+    [progress restoring confd.conf]
+    !cp confd.conf.orig confd.conf
+    ???SH-PROMPT:

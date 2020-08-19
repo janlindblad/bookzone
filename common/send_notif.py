@@ -9,6 +9,12 @@
 * See the README  file for more information                         *
 *********************************************************************
 """
+
+# Ensure bookzone_example_ns module is in the Python load path
+import sys
+import os
+sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
+
 import time
 import confd
 from confd.dp import Daemon

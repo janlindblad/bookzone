@@ -1,0 +1,118 @@
+[doc Testing 1-intro per README.md]
+# Run tests with https://github.com/hawk/lux
+
+[shell 1]
+    [progress build]
+    !make clean all start
+    ?Build complete
+    !make cli-c
+    ?Welcome|admin connected
+    ?#
+
+    [progress cli]
+    !show running-config | nomore
+    ?aaa authentication users user admin
+    ?uid
+    ?gid
+    ?password
+    ?ssh_keydir
+    ?homedir
+    ?aaa authentication users user oper
+    ???#
+
+    !config
+    ???Entering configuration mode terminal
+    ???(config)#
+    !$_TAB_
+    ???Possible completions:
+    ?aaa
+    ?AAA management
+    ?alias
+    ?Create command alias.
+    ???(config)#
+
+    !books book ?
+    ???Possible completions:
+    ???<title:string>
+    ???(config)#
+
+    !books book "The Neverending Story"
+    ???Value for 'isbn' (<string>):
+    !9780140386332
+    ???(config-book-The Neverending Story)#
+    !$_TAB_
+    ???Possible completions:
+    ?author
+    ?isbn
+    ?price
+    ???(config-book-The Neverending Story)#
+
+    !author "Michael Ende"
+    ???(config-book-The Neverending Story)#
+    !price 8.50
+    ???(config-book-The Neverending Story)#
+    !top
+    ???(config)#
+
+    !show c
+    ???books book "The Neverending Story"
+    ?isbn
+    ?9780140386332
+    ?author
+    ?"Michael Ende"
+    ?price
+    ?8.5
+    ???(config)#
+
+    !commit
+    ?Commit complete.
+    ???(config)#
+
+    !show full-configuration
+    ???books book "The Neverending Story"
+    ?isbn
+    ?9780140386332
+    ?author
+    ?"Michael Ende"
+    ?price
+    ?8.5
+    !$_CTRL_C_
+    ???Aborted: by user
+    ???(config)#
+
+    !exit
+    ???#
+    !exit
+    ???SH-PROMPT:
+
+    [progress netconf]
+    !python3 $$CONFD_DIR/bin/netconf-console --get-config
+    ???<?xml version="1.0" encoding="UTF-8"?>
+    ???<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">
+    ???<data>
+    ???<books xmlns="http://example.com/ns/bookzone">
+    ???<book>
+    ???<title>The Neverending Story</title>
+    ???<isbn>9780140386332</isbn>
+    ???<author>Michael Ende</author>
+    ???<price>8.5</price>
+    ???</book>
+    ???</books>
+    ???<aaa xmlns="http://tail-f.com/ns/aaa/1.1">
+    #...
+    ???</data>
+    ???</rpc-reply>
+    ???SH-PROMPT:
+
+    !python3 $$CONFD_DIR/bin/netconf-console --get-config --xpath /books
+    ???<?xml version="1.0" encoding="UTF-8"?>
+    ???<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">
+    ???<data>
+    ???<books xmlns="http://example.com/ns/bookzone">
+    ???<book>
+    ???<title>The Neverending Story</title>
+    ???<isbn>9780140386332</isbn>
+    ???<author>Michael Ende</author>
+    ???<price>8.5</price>
+    ???</book>
+    ???SH-PROMPT:

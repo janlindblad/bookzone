@@ -405,9 +405,8 @@ to make the change take effect. Or you could restart ConfD like this
 Once you have ConfD running with RESTCONF enabled, go ahead and send
 a RESTCONF query to it. For example like this
 
-> `$ ` **curl -i -X GET http://localhost:8080/restconf/data/books -u admin:admin**  
+> `$ ` **curl -i -X GET http://localhost:8080/restconf/data/bookzone-example:books -u admin:admin**  
 `HTTP/1.1 200 OK`  
-`Server: `  
 `Date: Mon, 05 Aug 2019 15:32:46 GMT`  
 `Last-Modified: Fri, 01 Jan 1971 00:00:00 GMT`  
 `Cache-Control: private, no-cache, must-revalidate, proxy-revalidate`  
@@ -427,9 +426,8 @@ a RESTCONF query to it. For example like this
 XML?? You prefer JSON? Ok, that's fine. Just add a header to accept
 that and go again.
 
-> `$ ` **curl -i -X GET http://localhost:8080/restconf/data/books -u admin:admin --header "Accept: application/yang-data+json"**  
+> `$ ` **curl -i -X GET http://localhost:8080/restconf/data/bookzone-example:books -u admin:admin --header "Accept: application/yang-data+json"**  
 `HTTP/1.1 200 OK`  
-`Server: `  
 `Date: Mon, 05 Aug 2019 15:34:18 GMT`  
 `Last-Modified: Fri, 01 Jan 1971 00:00:00 GMT`  
 `Cache-Control: private, no-cache, must-revalidate, proxy-revalidate`  

@@ -1,0 +1,84 @@
+[doc Testing 3-action per README.md]
+# Run tests with https://github.com/hawk/lux
+
+[shell 1]
+    [progress build]
+    !make clean all start
+    ?Build complete
+    !make cli-c
+    ?Welcome|admin connected
+    ?#
+
+    [progress cli]
+    !users user janl purchase title "What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action" format paperback number-of-copies 1
+    ???out-of-stock
+
+[shell 2]
+    [progress send-notif]
+    !make send-notif
+    ???SH-PROMPT:
+
+[shell 3]
+    !python3 $$CONFD_DIR/bin/netconf-console --create-subscription Trader
+    ???<?xml version="1.0" encoding="UTF-8"?>
+    ???<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">
+    ???<ok/>
+    ???</rpc-reply>
+
+[shell 2]
+    !make send-notif
+    ???SH-PROMPT:
+
+[shell 3]
+    !python3 $$CONFD_DIR/bin/netconf-console --create-subscription Trader
+    ???<?xml version="1.0" encoding="UTF-8"?>
+    ???<notification xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">
+    ???<eventTime>
+    ???</eventTime>
+    ???<shipping xmlns="http://example.com/ns/bookzone">
+    ???<user>janl</user>
+    ???<title>What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action</title>
+    ???<format xmlns:bz="http://example.com/ns/bookzone">bz:paperback</format>
+    ???<number-of-copies>1</number-of-copies>
+    ???</shipping>
+    ???</notification>
+
+[shell 1]
+    [progress build-c]
+    !exit
+    ???SH-PROMPT:
+    !make clean all start USE_C=1
+    ?Build complete
+    !make cli-c
+    ?Welcome|admin connected
+    ?#
+
+    [progress cli-c]
+    !users user janl purchase title "What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action" format paperback number-of-copies 1
+    ???out-of-stock
+
+[shell 3]
+    !python3 $$CONFD_DIR/bin/netconf-console --create-subscription Trader
+    ???<?xml version="1.0" encoding="UTF-8"?>
+    ???<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">
+    ???<ok/>
+    ???</rpc-reply>
+
+[shell 2]
+    [progress send-notif-c]
+    !make send-notif USE_C=1
+    ???Trader Shipping notification delivered
+    ???SH-PROMPT:
+
+[shell 3]
+    ???<?xml version="1.0" encoding="UTF-8"?>
+    ???<notification xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">
+    ???<eventTime>
+    ???</eventTime>
+    ???<shipping xmlns="http://example.com/ns/bookzone">
+    ???<user>janl</user>
+    ???<title>What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action</title>
+    ???<format xmlns:bz="http://example.com/ns/bookzone">bz:paperback</format>
+    ???<number-of-copies>1</number-of-copies>
+    ???</shipping>
+    ???</notification>
