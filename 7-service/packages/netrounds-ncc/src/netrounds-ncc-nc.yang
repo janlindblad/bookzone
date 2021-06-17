@@ -1,0 +1,18 @@
+module netrounds-ncc-nc {
+  yang-version 1.1;
+  namespace "http://tail-f.com/ns/ned-id/netrounds-ncc-nc";
+  prefix netrounds-ncc-nc;
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import tailf-ncs-ned {
+    prefix ned;
+  }
+
+  identity netrounds-ncc-nc {
+    tailf:abstract;
+    base ned:netconf-ned-id;
+  }
+}

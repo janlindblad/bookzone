@@ -1,0 +1,13 @@
+module netrounds-ncc-nc-1.0 {
+  yang-version 1.1;
+  namespace "http://tail-f.com/ns/ned-id/netrounds-ncc-nc-1.0";
+  prefix netrounds-ncc-nc-1.0;
+
+  import netrounds-ncc-nc {
+    prefix family;
+  }
+
+  identity netrounds-ncc-nc-1.0 {
+    base family:netrounds-ncc-nc;
+  }
+}

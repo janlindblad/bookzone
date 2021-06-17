@@ -1,9 +1,5 @@
-<?xml version="1.0"?>
-<!-- This file has been generated. Do NOT edit it.
-     For changes edit the original instead.
--->
 <ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
-  <name>cisco-iosxe-nc-1.0</name>
+  <name>cisco-iosxe</name>
   <package-version>1.0</package-version>
   <description>Generated netconf package</description>
   <ncs-min-version>5.5</ncs-min-version>
@@ -11,7 +7,7 @@
     <name>cisco-iosxe</name>
     <ned>
       <netconf>
-        <ned-id xmlns:id="http://tail-f.com/ns/ned-id/cisco-iosxe-nc-1.0">id:cisco-iosxe-nc-1.0</ned-id>
+        <ned-id>to be replaced by build</ned-id>
       </netconf>
       <device>
         <vendor>Acme</vendor>

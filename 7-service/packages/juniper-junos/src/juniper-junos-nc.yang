@@ -1,0 +1,18 @@
+module juniper-junos-nc {
+  yang-version 1.1;
+  namespace "http://tail-f.com/ns/ned-id/juniper-junos-nc";
+  prefix juniper-junos-nc;
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import tailf-ncs-ned {
+    prefix ned;
+  }
+
+  identity juniper-junos-nc {
+    tailf:abstract;
+    base ned:netconf-ned-id;
+  }
+}

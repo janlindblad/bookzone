@@ -15,7 +15,9 @@
      </state>
      <authgroup>default</authgroup>
      <device-type>
-       <netconf/>
+       <netconf>
+         <ned-id xmlns:id="http://tail-f.com/ns/ned-id/juniper-junos-nc-1.0">id:juniper-junos-nc-1.0</ned-id>
+       </netconf>
      </device-type>
    </device>
    <device>
@@ -34,7 +36,9 @@
      </state>
      <authgroup>default</authgroup>
      <device-type>
-       <netconf/>
+       <netconf>
+         <ned-id xmlns:id="http://tail-f.com/ns/ned-id/juniper-junos-nc-1.0">id:juniper-junos-nc-1.0</ned-id>
+       </netconf>
      </device-type>
    </device>
    <device>
@@ -53,7 +57,9 @@
      </state>
      <authgroup>default</authgroup>
      <device-type>
-       <netconf/>
+       <netconf>
+         <ned-id xmlns:id="http://tail-f.com/ns/ned-id/cisco-iosxe-nc-1.0">id:cisco-iosxe-nc-1.0</ned-id>
+       </netconf>
      </device-type>
    </device>
    <device>
@@ -72,7 +78,9 @@
      </state>
      <authgroup>default</authgroup>
      <device-type>
-       <netconf/>
+       <netconf>
+         <ned-id xmlns:id="http://tail-f.com/ns/ned-id/cisco-iosxe-nc-1.0">id:cisco-iosxe-nc-1.0</ned-id>
+       </netconf>
      </device-type>
    </device>
    <device>
@@ -91,7 +99,9 @@
      </state>
      <authgroup>default</authgroup>
      <device-type>
-       <netconf/>
+       <netconf>
+         <ned-id xmlns:id="http://tail-f.com/ns/ned-id/cisco-iosxe-nc-1.0">id:cisco-iosxe-nc-1.0</ned-id>
+       </netconf>
      </device-type>
    </device>
    <device>
@@ -110,7 +120,9 @@
      </state>
      <authgroup>default</authgroup>
      <device-type>
-       <netconf/>
+       <netconf>
+         <ned-id xmlns:id="http://tail-f.com/ns/ned-id/juniper-junos-nc-1.0">id:juniper-junos-nc-1.0</ned-id>
+       </netconf>
      </device-type>
    </device>
    <device>
@@ -129,7 +141,9 @@
      </state>
      <authgroup>default</authgroup>
      <device-type>
-       <netconf/>
+       <netconf>
+         <ned-id xmlns:id="http://tail-f.com/ns/ned-id/netrounds-ncc-nc-1.0">id:netrounds-ncc-nc-1.0</ned-id>
+       </netconf>
      </device-type>
    </device>
 </devices>

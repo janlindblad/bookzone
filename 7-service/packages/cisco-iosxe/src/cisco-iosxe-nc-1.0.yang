@@ -1,0 +1,13 @@
+module cisco-iosxe-nc-1.0 {
+  yang-version 1.1;
+  namespace "http://tail-f.com/ns/ned-id/cisco-iosxe-nc-1.0";
+  prefix cisco-iosxe-nc-1.0;
+
+  import cisco-iosxe-nc {
+    prefix family;
+  }
+
+  identity cisco-iosxe-nc-1.0 {
+    base family:cisco-iosxe-nc;
+  }
+}

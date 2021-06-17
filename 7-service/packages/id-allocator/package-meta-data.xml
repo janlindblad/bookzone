@@ -1,6 +1,6 @@
 <ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
   <name>id-allocator-example</name>
-  <package-version>0.0.0.0</package-version>
+  <package-version>1.0.0.0</package-version>
   <description>Example PKG Resource allocator for ids</description>
   <ncs-min-version>3.0</ncs-min-version>
 

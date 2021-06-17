@@ -1,12 +1,18 @@
+<?xml version="1.0"?>
+<!-- This file has been generated. Do NOT edit it.
+     For changes edit the original instead.
+-->
 <ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
-  <name>netrounds-ncc</name>
+  <name>netrounds-ncc-nc-1.0</name>
   <package-version>1.0</package-version>
   <description>Generated netconf package</description>
-  <ncs-min-version>4.7</ncs-min-version>
+  <ncs-min-version>5.5</ncs-min-version>
   <component>
     <name>netrounds-ncc</name>
     <ned>
-      <netconf/>
+      <netconf>
+        <ned-id xmlns:id="http://tail-f.com/ns/ned-id/netrounds-ncc-nc-1.0">id:netrounds-ncc-nc-1.0</ned-id>
+      </netconf>
       <device>
         <vendor>Acme</vendor>
       </device>
