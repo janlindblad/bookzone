@@ -147,12 +147,16 @@ value with a backslash. This is normal.
 `  <cr>                                                                                                        `  
 `Possible match completions:`  
 `  format  popularity`  
-`JLINDBLA-M-W0J2# ` **show books book The H[TAB][TAB]**  
+`# ` **show books book The H[TAB][TAB]**  
+`Possible completions:`  
+`  format  popularity  |  <cr>`  
+`# ` show books book The The\ Hitchhiker's\ Guide\ to\ the\ Galaxy **f[TAB]**  
+`# ` show books book The The\ Hitchhiker's\ Guide\ to\ the\ Galaxy format **[TAB]**  
 `Possible completions:`  
 `  0330258648  9781400052929  |  <cr>`  
 `Possible match completions:`  
 `  number-of-copies`  
-`# ` show books book The\ Hitchhiker's\ Guide\ to\ the\ Galaxy format 0[TAB]
+`# ` show books book The\ Hitchhiker's\ Guide\ to\ the\ Galaxy format **0[TAB]**
 `# ` show books book The\ Hitchhiker's\ Guide\ to\ the\ Galaxy format 0330258648 
 `            IN                          `  
 `ISBN        STOCK  RESERVED  AVAILABLE  `  

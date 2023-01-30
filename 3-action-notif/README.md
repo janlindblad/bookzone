@@ -140,7 +140,7 @@ Now we have to play the role of the system and decice when it is time
 to send that notification. When you feel the right time has come, run
 
 > 
-`$ ` **./send_notif**  
+`$ ` **./send_notif.py**  
 `Trader Shipping notification delivered`  
 
 Again, the implementation of the notification sender is a bit on the
@@ -219,7 +219,7 @@ window, or hit ^Z, run send_notif, and return to your subscription
 with the fg command. 
 
 >
-`$ ` **./send_notif**  
+`$ ` **./send_notif.py**  
 `Trader Shipping notification delivered`  
 
 The notification will then be displayed immediately.

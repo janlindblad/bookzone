@@ -157,14 +157,14 @@ in the sample data.
 
 `# ` **con**  
 `Entering configuration mode terminal`  
-`(config)# ` **no authors author**  
+`(config)# ` **no authors author [TAB]**  
 `Possible completions:`  
 `  Douglas Adams  Malala Yousafzai  Michael Ende  Per Espen Stoknes  Sun Tzu  <cr>`  
 `(config)# ` **no authors author Michael\ Ende**  
 `(config)# ` **commit**  
 `Aborted: illegal reference 'books book "The Neverending Story" author'`  
-`(config)# no books book The\ Neverending\ Story `  
-`(config)# commit`  
+`(config)# ` **no books book The\ Neverending\ Story**  
+`(config)# ` **commit**  
 `Commit complete.`  
 
 At first, when we try to delete the author and commit, the system
@@ -198,7 +198,7 @@ transaction like any other. No magic there.
 `  price     29.95`  
 ` !`  
 `!`  
-`(config)# commit`  
+`(config)# ` **commit**  
 `Commit complete.`  
 
 Adding back the book works fine as long as we are also adding back
@@ -215,8 +215,8 @@ parts of a transaction, and to edit the result before committing it.
 `(config)# ` **rollback configuration**  
 `(config)# ` **commit**
 `Commit complete.`
-`JLINDBLA-M-W0J2(config)# ` **rollback configuration**
-`JLINDBLA-M-W0J2(config)# ` **show c**                
+`(config)# ` **rollback configuration**
+`(config)# ` **show c**                
 `authors author "Michael Ende"`  
 ` account-id 1001`  
 `!`  
@@ -232,6 +232,9 @@ parts of a transaction, and to edit the result before committing it.
 `  price     29.95`  
 ` !`  
 `!`  
+`(config)# ` **commit**                
+`Commit complete.`
+`(config)# ` **exit**
 `# ` **show running-config books book The\ Neverending\ Story|tab**  
 `TITLE                  AUTHOR        LANGUAGE  ISBN           FORMAT ID  PRICE  `  
 `--------------------------------------------------------------------------------`  

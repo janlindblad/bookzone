@@ -89,9 +89,9 @@ models for in the YANG. Now we see our work in a CLI representation,
 but it is also available in numerous programming APIs.
 
 > 
-`admin connected from 127.0.0.1 using console on JLINDBLA-M-W0J2`  
-`JLINDBLA-M-W0J2#`  
-`JLINDBLA-M-W0J2# ` **show running-config books**  
+`admin connected from 127.0.0.1 using console on JL`  
+`JL#`  
+`JL# ` **show running-config books**  
 `books book "I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban"`  
 ` author "Malala Yousafzai"`  
 ` format 9780297870913`  
@@ -112,7 +112,7 @@ but it is also available in numerous programming APIs.
 Next, let's show what users and authors we have.
 
 > 
-`JLINDBLA-M-W0J2# ` **show running-config users**  
+`JL# ` **show running-config users**  
 `users user bc`  
 ` name "Benoît Claise"`  
 `!`  
@@ -122,7 +122,7 @@ Next, let's show what users and authors we have.
 `users user joe`  
 ` name "Joe Clarke"`  
 `!`  
-`JLINDBLA-M-W0J2# ` **show running-config authors**  
+`JL# ` **show running-config authors**  
 `authors author "Douglas Adams"`  
 ` account-id 1010`  
 `!`  
@@ -150,9 +150,9 @@ Now, let's add add a book to our catalog. While working in the CLI,
 remember to hit [TAB] to save some typing and see your options.
 
 > 
-`JLINDBLA-M-W0J2# ` **con**  
+`JL# ` **con**  
 `Entering configuration mode terminal`  
-`JLINDBLA-M-W0J2(config)# ` **books book [TAB]**  
+`JL(config)# ` **books book [TAB]**  
 `Possible completions:`  
 `  <title:string>                                                                                                `  
 `  I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban                                  `  
@@ -166,8 +166,8 @@ Ok, here are the book titles again, but that's not where I want to
 go. I want to add a new book, actually one of my favorites:
 
 > 
-`JLINDBLA-M-W0J2(config)# ` **books book "Actionable Gamification: Beyond Points, Badges, and Leaderboards"**  
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **[TAB]**  
+`JL(config)# ` **books book "Actionable Gamification: Beyond Points, Badges, and Leaderboards"**  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **[TAB]**  
 `Possible completions:`  
 `  author     `  
 `  format     `  
@@ -180,7 +180,7 @@ go. I want to add a new book, actually one of my favorites:
 `  no         Negate a command or set its defaults`  
 `  pwd        Display current mode path`  
 `  top        Exit to top level and optionally run command`  
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **author "Yu-kai Chou" [TAB]**  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **author "Yu-kai Chou" [TAB]**  
 `                                                                                                      ^`  
 `% Invalid input detected at '^' marker.`  
 
@@ -194,19 +194,19 @@ however, so let's go ahead with this anyway. The system is fine with
 this... for now.
 
 > 
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# author "Yu-kai Chou"` **[ENTER]**  
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# `  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# author "Yu-kai Chou"` **[ENTER]**  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# `  
 
 Next up is the book language. Not marked mandatory in the YANG, so 
 you could skip this step if you wanted. Hitting [TAB] reveals all the 
 language options we modeled in the YANG.
 
 > 
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **language [TAB]**  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **language [TAB]**  
 `Possible completions:`  
 `  arabic  chinese  english  french  moroccan-arabic  swahili  swedish`  
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# language ` **english**  
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# `  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# language ` **english**  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# `  
 
 Then we have format, which is keyed by ISBN number. We put some 
 proper effort into describing the ISBN type quite exactly. The CLI 
@@ -215,10 +215,10 @@ one 13 character variant. I'm lazy to look up the actual ISBN number
 so for now, I'll use some random 13 character string.
 
 > 
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **format [TAB]**  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **format [TAB]**  
 `Possible completions:`  
 `  <isbn:string, must be exactly 10 chars>  <isbn:string, must be exactly 13 chars>  range`  
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **format willfindout23**  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **format willfindout23**  
 `------------------------------------------------------------------------------------------------------^`  
 `syntax error: "willfindout23" is not a valid value.`  
 
@@ -232,7 +232,7 @@ and verify that the title, author, format and ISBN all match up, by
 all means, be my guest.
 
 > 
-`JLINDBLA-M-W0J2(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **format 9781511744041**  
+`JL(config-book-Actionable Gamification: Beyond Points, Badges, and Leaderboards)# ` **format 9781511744041**  
 `Value for 'format-id' [audio-cd,epub,file-idty,hardcover,...]: ` **paperback**  
 
 One more detail remains, the price. It's modeled to be optional, but 
@@ -240,7 +240,7 @@ the book will not be orderable until it has a price, so let's get
 that done right away.
 
 > 
-`JLINDBLA-M-W0J2(config-format-9781511744041)# ` **[TAB]**  
+`JL(config-format-9781511744041)# ` **[TAB]**  
 `Possible completions:`  
 `  format-id   `  
 `  price       `  
@@ -252,13 +252,13 @@ that done right away.
 `  no          Negate a command or set its defaults`  
 `  pwd         Display current mode path`  
 `  top         Exit to top level and optionally run command`  
-`JLINDBLA-M-W0J2(config-format-9781511744041)# ` **price 22.22**  
-`JLINDBLA-M-W0J2(config-format-9781511744041)# `  
+`JL(config-format-9781511744041)# ` **price 22.22**  
+`JL(config-format-9781511744041)# `  
 
 Finally done? Let's commit.
 
 >  
-`JLINDBLA-M-W0J2(config-format-9781511744041)# ` **commit**  
+`JL(config-format-9781511744041)# ` **commit**  
 `Aborted: illegal reference 'books book "Actionable Gamification: Beyond Points, Badges, and Leaderboards" author'`  
 
 Ah, we promised earlier that we'd make sure the author name we 
@@ -267,18 +267,18 @@ The system sees a leafref, and respects it. So let's return to the
 top of the YANG, and go into container authors.
 
 >  
-`JLINDBLA-M-W0J2(config-format-9781511744041)# ` **top**  
-`JLINDBLA-M-W0J2(config)# ` **authors author [TAB]**  
+`JL(config-format-9781511744041)# ` **top**  
+`JL(config)# ` **authors author [TAB]**  
 `Possible completions:`  
 `  <name:string>  Douglas Adams  Malala Yousafzai  Michael Ende  Per Espen Stoknes  Sun Tzu  range`  
-`JLINDBLA-M-W0J2(config)# authors author "Yu-kai Chou"`  
-`JLINDBLA-M-W0J2(config-author-Yu-kai Chou)# `  
+`JL(config)# authors author ' **"Yu-kai Chou"**  
+`JL(config-author-Yu-kai Chou)# `  
 
 So let's see what we have before we have another go at committing.
 
 >  
-`JLINDBLA-M-W0J2(config-author-Yu-kai Chou)# ` **top**  
-`JLINDBLA-M-W0J2(config)# ` **show c**  
+`JL(config-author-Yu-kai Chou)# ` **top**  
+`JL(config)# ` **show c**  
 `authors author "Yu-kai Chou"`  
 `!`  
 `books book "Actionable Gamification: Beyond Points, Badges, and Leaderboards"`  
@@ -289,9 +289,9 @@ So let's see what we have before we have another go at committing.
 `  price     22.22`  
 ` !`  
 `!`  
-`JLINDBLA-M-W0J2(config)# ` **commit**  
+`JL(config)# ` **commit**  
 `Commit complete.`  
-`JLINDBLA-M-W0J2(config)# `  
+`JL(config)# `  
 
 
 ### Configuring via NETCONF

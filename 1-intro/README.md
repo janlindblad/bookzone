@@ -95,15 +95,15 @@ You can start the CLI by typing
 `Commercial use of the CLI is prohibited.`  
 `You must disable the CLI in confd.conf for production.`  
 `For more information, visit http://www.tail-f.com.`  
-`admin connected from 127.0.0.1 using console on JLINDBLA-M-W0J2`  
-`JLINDBLA-M-W0J2# `
+`admin connected from 127.0.0.1 using console on JL`  
+`JL# `
 
 You are now in the operational mode CLI. You could display the 
 current running configuraion. You will find only the (boring) factory 
 default configuration in there:
 
 > 
-`JLINDBLA-M-W0J2# ` **show running-config**  
+`JL# ` **show running-config**  
 `aaa authentication users user admin`  
 ` uid        9000`  
 ` gid        20`  
@@ -113,15 +113,15 @@ default configuration in there:
 `!`  
 `aaa authentication users user oper`  
 ...  
-`JLINDBLA-M-W0J2# `  
+`JL# `  
 
 To add a book, first we need to go into configuration mode. Hitting 
 the [TAB]-key displays the completions at that point.
 
 > 
-`JLINDBLA-M-W0J2# ` **config**  
+`JL# ` **config**  
 `Entering configuration mode terminal`  
-`JLINDBLA-M-W0J2(config)# ` **[TAB]**  
+`JL(config)# ` **[TAB]**  
 `Possible completions:`  
 `  aaa        AAA management`  
 `  alias      Create command alias.`  
@@ -133,7 +133,7 @@ the [TAB]-key displays the completions at that point.
 `  abort      Abort configuration session`  
 `  annotate   Add a comment to a statement`  
 ...  
-`JLINDBLA-M-W0J2(config)# `  
+`JL(config)# `  
 
 The part we want to configure is inside books, so type a 'b' and hit
 the [TAB] key to let the system fill in 'books' for you. Hit [TAB] 
@@ -143,15 +143,15 @@ under this location yet. If you hit question mark ?, you will see the
 type of the data expected at this point:
 
 > 
-`JLINDBLA-M-W0J2(config)# ` **books book ?**  
+`JL(config)# ` **books book ?**  
 `Possible completions:`  
 `  <title:string>  range`  
-`JLINDBLA-M-W0J2(config)# `  
+`JL(config)# `  
 
 Type double quotes and the name of the book you want to add:
 
 > 
-`JLINDBLA-M-W0J2(config)# ` books book **"The Neverending Story"**  
+`JL(config)# ` books book **"The Neverending Story"**  
 
 When you hit [ENTER] the system detects that the ISBN leaf is 
 mandatory, so by default prompts you for a value:
@@ -168,7 +168,7 @@ This will now leave you in the book The Neverending Story "submode".
 Hitting [TAB] here shows you the options:
 
 > 
-`JLINDBLA-M-W0J2(config-book-The Neverending Story)# ` **[TAB]**  
+`JL(config-book-The Neverending Story)# ` **[TAB]**  
 `Possible completions:`  
 `  author     `  
 `  isbn       `  
@@ -181,35 +181,35 @@ Hitting [TAB] here shows you the options:
 `  no         Negate a command or set its defaults`  
 `  pwd        Display current mode path`  
 `  top        Exit to top level and optionally run command`  
-`JLINDBLA-M-W0J2(config-book-The Neverending Story)# `  
+`JL(config-book-The Neverending Story)# `  
 
 You can add a few more facts about the book here, then return to the 
 top level mode.
 
-> `JLINDBLA-M-W0J2(config-book-The Neverending Story)# ` **author "Michael Ende"**  
-> `JLINDBLA-M-W0J2(config-book-The Neverending Story)# ` **price 8.50**  
-> `JLINDBLA-M-W0J2(config-book-The Neverending Story)# ` **top**  
-> `JLINDBLA-M-W0J2(config)# `  
+> `JL(config-book-The Neverending Story)# ` **author "Michael Ende"**  
+> `JL(config-book-The Neverending Story)# ` **price 8.50**  
+> `JL(config-book-The Neverending Story)# ` **top**  
+> `JL(config)# `  
 
 Once back at the top level, showing the current configuration changes 
 is easy using the "show c" command, short for show configuration.
 
 > 
-`JLINDBLA-M-W0J2(config)# ` **show c**  
+`JL(config)# ` **show c**  
 `books book "The Neverending Story"`  
 ` isbn   9780140386332`  
 ` author "Michael Ende"`  
 ` price  8.5`  
 `!`  
-`JLINDBLA-M-W0J2(config)# `  
+`JL(config)# `  
 
 To store this configuration persistently in the database, you need to
 commit it:
 
 > 
-`JLINDBLA-M-W0J2(config)# ` **commit**  
+`JL(config)# ` **commit**  
 `Commit complete.`  
-`JLINDBLA-M-W0J2(config)# `  
+`JL(config)# `  
 
 Very good. You have successfully added and persisted the addtion.
 Let's check that the book is there. To show the full configuration in
@@ -218,7 +218,7 @@ for short. Hit 'q' to exit the show command when it stops at the
 first full page.
 
 > 
-`JLINDBLA-M-W0J2(config)# ` **show full-configuration**  
+`JL(config)# ` **show full-configuration**  
 `books book "The Neverending Story"`  
 ` isbn   9780140386332`  
 ` author "Michael Ende"`  
@@ -234,7 +234,7 @@ first full page.
 `aaa authentication users user oper`  
 ...  
 `Aborted: by user`  
-`JLINDBLA-M-W0J2(config)# `  
+`JL(config)# `  
 
 Now that we have a little bit of config in the system, let's leave 
 the ConfD CLI and retrieve this over NETCONF. Type exit to get out of 
@@ -242,9 +242,9 @@ the configuration mode into operational mode, then again to get
 completely out of the ConfD CLI. Hitting [Ctrl+D] also works.
 
 > 
-`JLINDBLA-M-W0J2(config)# ` **exit**  
-`JLINDBLA-M-W0J2# ` **exit**  
-`JLINDBLA-M-W0J2:1-intro jlindbla$ `  
+`JL(config)# ` **exit**  
+`JL# ` **exit**  
+`JL:1-intro jlindbla$ `  
 
 ### Retrieving the configuration using netconf-console
 
@@ -257,7 +257,7 @@ To get the full configuration we just created in the ConfD CLI, for
 example, a single flag is needed:
 
 > 
-`JLINDBLA-M-W0J2:1-intro jlindbla$ ` **netconf-console --get-config**  
+`JL:1-intro jlindbla$ ` **netconf-console --get-config**  
 `<?xml version="1.0" encoding="UTF-8"?>`  
 `<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
 `  <data>`  
@@ -282,7 +282,7 @@ This response is rather long, however, so it may make sense to only
 ask for the /books section of the configuration:
 
 >
-`JLINDBLA-M-W0J2:1-intro jlindbla$ ` 
+`JL:1-intro jlindbla$ ` 
 **netconf-console --get-config --xpath /books**  
 `<?xml version="1.0" encoding="UTF-8"?>`  
 `<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">`  
@@ -297,7 +297,7 @@ ask for the /books section of the configuration:
 `    </books>`  
 `  </data>`  
 `</rpc-reply>`  
-`JLINDBLA-M-W0J2:1-intro jlindbla$ `  
+`JL:1-intro jlindbla$ `  
 
 
 Contributions
