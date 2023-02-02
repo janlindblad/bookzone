@@ -102,7 +102,87 @@ the server whenever you like by just issuing
 Suggested Steps
 ---------------
 
-%% To be written %%
+In this section we'd like to demonstrate that the augmented leafs
+appear embedded in the original model, just like any other.
+
+For instance, the augmenting model adds a "recommendations" leaf under
+books book. It works just like any other leaf, as you would expect.
+
+`# ` **config**  
+`Entering configuration mode terminal`  
+`(config)# ` **books book [TAB]**  
+`Possible completions:`  
+`  <title:string>`  
+`  I Am Malala: The Girl Who Stood Up for Education and Was Shot by the Taliban`  
+`  The Art of War`  
+`  The Hitchhiker's Guide to the Galaxy`  
+`  The Neverending Story`  
+`  What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action`  
+`(config)# books book ` **What[TAB]**  
+`Possible completions:`  
+`  author  format  language  recommendations  <cr>`  
+`(config)# books book What\ We\ Think\ About\ When\ We\ Try\ Not\ To\ Think\ About\ Global\ Warming:\ Toward\ a\ New\ Psychology\ of\ Climate\ Action ` **recommendations ?**  
+`Possible completions:`  
+`  <review-date:dateTime (CCYY-MM-DDTHH:MM:SS)>`  
+`(config)# books book What\ We\ Think\ About\ When\ We\ Try\ Not\ To\ Think\ About\ Global\ Warming:\ Toward\ a\ New\ Psychology\ of\ Climate\ Action recommendations` **2023-02-06T09:00:00 [TAB]**  
+`Possible completions:`  
+`  review-comment  score  <cr>`  
+`(config)# books book What\ We\ Think\ About\ When\ We\ Try\ Not\ To\ Think\ About\ Global\ Warming:\ Toward\ a\ New\ Psychology\ of\ Climate\ Action recommendations 2023-02-06T09:00:00 ` **review-comment Daunting score 4**  
+`(config-recommendations-2023-02-06T09:00:00-00:00)#` **exit**  
+`(config-book-What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action)# ` **recommendations 2023-02-09T10:45:00 review-comment "Scaring prospects" score 3**  
+`(config-recommendations-2023-02-09T10:45:00-00:00)#` **top**  
+`(config)# ` **show c**  
+`books book "What We Think About When We Try Not To Think About Global Warming: Toward a New Psychology of Climate Action"`  
+` recommendations 2023-02-06T09:00:00-00:00`  
+`  score          4`  
+`  review-comment Daunting`  
+` !`  
+` recommendations 2023-02-09T10:45:00-00:00`  
+`  score          3`  
+`  review-comment "Scaring prospects"`  
+` !`  
+`!`  
+
+Similarly, the audiozone augmentations adds a concept "friends" to 
+the audiozone users. 
+
+`(config)# ` **users user [TAB]**  
+`Possible completions:`  
+`  <user-id:string>  bc  janl  joe`  
+`(config)# users user ` **j [TAB]**  
+`Possible completions:`  
+`  janl  joe`  
+`(config)# users user j` **anl [TAB]**  
+`Possible completions:`  
+`  friends  name  payment-methods  purchase  <cr>`  
+`(config)# users user janl `  
+`(config-user-janl)# ` **friends [TAB]**  
+`Possible completions:`  
+`  "Benoît Claise"  "Jan Lindblad"  "Joe Clarke"  [`  
+`(config-user-janl)# friends ` **[ "Benoît Claise" "Joe Clarke" ]**  
+`(config-user-janl)# ` **sh c**  
+`users user janl`  
+` friends [ "Benoît Claise" "Joe Clarke" ]`  
+`!`  
+`(config-user-janl)# ` **comm**  
+`Commit complete.`  
+`(config-user-janl)# ` **top**  
+`(config)# ` **show full-configuration users**  
+`users user bc`  
+` name "Benoît Claise"`  
+`!`  
+`users user janl`  
+` name    "Jan Lindblad"`  
+` friends [ "Benoît Claise" "Joe Clarke" ]`  
+` payment-methods payment-method paypal 4711.1234.0000.1234`  
+` !`  
+` payment-methods payment-method klarna 1234.4711.1234.0001`  
+` !`  
+`!`  
+`users user joe`  
+` name "Joe Clarke"`  
+`!`  
+`(config)# `
 
 Contributions
 -------------
